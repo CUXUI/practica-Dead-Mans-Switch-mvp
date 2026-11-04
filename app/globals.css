@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+/*
+  TOKENS DE DISEÑO (placeholder). Reemplazar con los del equipo de diseño.
+  Usar siempre estos nombres en los componentes, nunca hex sueltos.
+  Contraste mínimo: 4,5:1 texto, 3:1 controles.
+*/
+@theme {
+  --color-brand-primary: #1f4e5f;
+  --color-brand-on-primary: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f3f5f6;
+  --color-text: #1a2326;
+  --color-text-muted: #4a5a60;
+  --color-border: #7a8a90;
+  --color-danger: #b3261e;
+  --color-success: #1b6e3c;
+}
+
+body {
+  background: var(--color-surface-muted);
+  color: var(--color-text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
