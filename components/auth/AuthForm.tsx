@@ -27,9 +27,16 @@ export default function AuthForm({ mode }: Props) {
     const supabase = createClient();
 
     if (mode === "login") {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      // Acepta correo o usuario: si es usuario, se resuelve el correo de esa cuenta.
+      const identifier = String(form.get("identifier") ?? "").trim();
+      const { data: resolved } = await supabase.rpc("resolve_login_email", { identifier });
+      if (!resolved) {
+        setLoading(false);
+        return setError("No pudimos iniciar sesión. Revisá tu correo o usuario y contraseña.");
+      }
+      const { error } = await supabase.auth.signInWithPassword({ email: resolved, password });
       setLoading(false);
-      if (error) return setError("No pudimos iniciar sesión. Revisá tu correo y contraseña.");
+      if (error) return setError("No pudimos iniciar sesión. Revisá tu correo o usuario y contraseña.");
       router.push("/home");
       router.refresh();
       return;
@@ -38,8 +45,14 @@ export default function AuthForm({ mode }: Props) {
     // Registro (E0): nombre, teléfono, mayor de 18 y aviso de que no reemplaza a emergencias
     const fullName = String(form.get("full_name") ?? "").trim();
     const phone = String(form.get("phone") ?? "").trim();
+    const username = String(form.get("username") ?? "").trim().toLowerCase();
     const isAdult = form.get("is_adult") === "on";
     const ackEmergency = form.get("ack_emergency") === "on";
+
+    if (!/^[a-z0-9._]{3,20}$/.test(username)) {
+      setLoading(false);
+      return setError("El usuario tiene que tener de 3 a 20 caracteres: letras, números, punto o guion bajo.");
+    }
 
     if (!isAdult || !ackEmergency) {
       setLoading(false);
@@ -50,7 +63,7 @@ export default function AuthForm({ mode }: Props) {
       email,
       password,
       options: {
-        data: { full_name: fullName, phone, is_adult: true },
+        data: { full_name: fullName, phone, username, is_adult: true },
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
@@ -77,13 +90,33 @@ export default function AuthForm({ mode }: Props) {
             <label htmlFor="phone" className="mb-1 block text-sm font-medium">Teléfono</label>
             <input id="phone" name="phone" type="tel" required autoComplete="tel" className={inputClass} />
           </div>
+          <div>
+            <label htmlFor="username" className="mb-1 block text-sm font-medium">Usuario</label>
+            <input
+              id="username"
+              name="username"
+              required
+              minLength={3}
+              maxLength={20}
+              pattern="[a-zA-Z0-9._]{3,20}"
+              autoComplete="username"
+              className={inputClass}
+            />
+          </div>
         </>
       )}
 
-      <div>
-        <label htmlFor="email" className="mb-1 block text-sm font-medium">Correo</label>
-        <input id="email" name="email" type="email" required autoComplete="email" className={inputClass} />
-      </div>
+      {mode === "login" ? (
+        <div>
+          <label htmlFor="identifier" className="mb-1 block text-sm font-medium">Correo o usuario</label>
+          <input id="identifier" name="identifier" required autoComplete="username" className={inputClass} />
+        </div>
+      ) : (
+        <div>
+          <label htmlFor="email" className="mb-1 block text-sm font-medium">Correo</label>
+          <input id="email" name="email" type="email" required autoComplete="email" className={inputClass} />
+        </div>
+      )}
       <div>
         <label htmlFor="password" className="mb-1 block text-sm font-medium">Contraseña</label>
         <input

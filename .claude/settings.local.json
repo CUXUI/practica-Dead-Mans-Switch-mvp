@@ -3,7 +3,17 @@
     "allow": [
       "mcp__8486a5ed-44bf-48ee-bbe3-72662e1e378e__get_project",
       "mcp__8486a5ed-44bf-48ee-bbe3-72662e1e378e__query_logs",
-      "mcp__8486a5ed-44bf-48ee-bbe3-72662e1e378e__execute_sql"
+      "mcp__8486a5ed-44bf-48ee-bbe3-72662e1e378e__execute_sql",
+      "PowerShell(npm install --save-exact @upstash/qstash web-push 2>&1)",
+      "PowerShell(npm install --save-dev --save-exact @types/web-push 2>&1)",
+      "PowerShell(npm audit 2>&1)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 20; \"exit=$LASTEXITCODE\")",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 10; \"exit=$LASTEXITCODE\")",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 20; \"exit=$LASTEXITCODE\"; Test-Path public\\\\icon-192.png; Get-ChildItem public | Select-Object -ExpandProperty Name)",
+      "mcp__8486a5ed-44bf-48ee-bbe3-72662e1e378e__list_projects",
+      "mcp__8486a5ed-44bf-48ee-bbe3-72662e1e378e__get_publishable_keys",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 5; \"exit=$LASTEXITCODE\")",
+      "mcp__8486a5ed-44bf-48ee-bbe3-72662e1e378e__apply_migration"
     ]
   }
 }
