@@ -20,3 +20,6 @@ Thumbs.db
 
 # mise: configuración local
 mise.toml
+
+# datos locales del adaptador del emisor (app/aviso/_datos)
+.datos-locales/

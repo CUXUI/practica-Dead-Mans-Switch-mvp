@@ -7,9 +7,13 @@ import NoticeForm from "@/components/notices/NoticeForm";
 import PushButton from "@/components/pwa/PushButton";
 import CancelarAlerta from "@/components/home/CancelarAlerta";
 import { textosHome } from "@/components/home/textos";
+import { textosInicio } from "@/components/home/textosInicio";
+import InicioApagado from "@/components/home/InicioApagado";
+import { avisoActual } from "@/app/aviso/_datos/sesion";
+import { primerNombre } from "@/app/aviso/_datos/formato";
 
-// Placeholder del núcleo: solo confirma que registro, sesión y base de datos funcionan.
-// El flujo "Home y confirmación" (E1, E2, E6) lo reemplaza. De momento solo está E6.
+// Sin aviso o con el aviso apagado: pantallas del flujo de quien emite (onboarding / Inicio apagado).
+// Encendido o en alerta: sigue el placeholder del núcleo con E6, hasta construir las portadas 02 a 05.
 export default async function HomePage({
   searchParams,
 }: {
@@ -30,6 +34,30 @@ export default async function HomePage({
 
   const brand = getBrand();
   const textos = textosHome(brand.variant);
+
+  // Desvío tras el login (Figma: «¿Cómo está su aviso?»):
+  // sin aviso → onboarding · apagado → Inicio apagado · encendido / en alerta → lo de abajo.
+  const aviso = await avisoActual({ supabase, user });
+  if (!aviso) redirect("/alta");
+  if (aviso.state === "off") {
+    const { data: filas } = await supabase
+      .from("notice_contacts")
+      .select("position, contacts(name, status)")
+      .eq("notice_id", aviso.id)
+      .order("position");
+    const contactos = (filas ?? [])
+      .map((f) => (Array.isArray(f.contacts) ? f.contacts[0] : f.contacts) as { name: string; status: string } | null)
+      .filter((c): c is { name: string; status: string } => !!c && c.status !== "removed");
+    return (
+      <InicioApagado
+        t={textosInicio(brand.variant)}
+        app={brand.name}
+        nombre={primerNombre(profile?.full_name ?? "")}
+        hayAceptado={contactos.some((c) => c.status === "accepted")}
+        pendientes={contactos.filter((c) => c.status === "pending").map((c) => primerNombre(c.name))}
+      />
+    );
+  }
 
   // E6: con una alerta en curso, el home pide cancelarla (acción deliberada).
   const { data: enAlerta } = await supabase
