@@ -5,6 +5,7 @@ import Reenviar from "@/components/contactos/Reenviar";
 import { Badge, BarraTitulo, EnlaceBoton, Numero, Pantalla, Progreso, Tarjeta } from "@/components/emisor/ui";
 import { CONFIG_EMISOR } from "@/app/aviso/_datos/config";
 import { adaptadorExtras } from "@/app/aviso/_datos/adaptador";
+import type { DatosContacto } from "@/app/aviso/_datos/tipos";
 import { avisoActual, exigirSesion } from "@/app/aviso/_datos/sesion";
 
 // R-AV-E1 · Web Aviso · invitación enviada (y lista de contactos fuera del onboarding).
@@ -27,9 +28,9 @@ export default async function Contactos({
     avisoActual(s),
   ]);
   const contactos = data ?? [];
-  const relaciones = await adaptadorExtras(s.supabase)
-    .leerRelaciones(s.user.id, contactos.map((c) => c.id))
-    .catch(() => ({}) as Record<string, string>);
+  const extras = await adaptadorExtras(s.supabase)
+    .leerContactos(s.user.id, contactos.map((c) => c.id))
+    .catch(() => ({}) as Record<string, DatosContacto>);
   const enAlta = !aviso;
   const puedeAgregar = contactos.length < CONFIG_EMISOR.contactosMax;
 
@@ -68,11 +69,15 @@ export default async function Contactos({
               <Numero n={i + 1} />
               <div className="min-w-0 flex-1 space-y-0.5">
                 <p className="font-semibold">{c.name}</p>
-                {relaciones[c.id] && <p className="text-sm text-text-muted">{relaciones[c.id]}</p>}
+                {extras[c.id]?.relacion && <p className="text-sm text-text-muted">{extras[c.id]?.relacion}</p>}
                 {c.status === "pending" && (
                   <>
                     <p className="text-sm text-text-muted">
-                      <Dia iso={c.created_at} prefijo={t.enviadaEl} />
+                      {extras[c.id]?.invitacionEnviadaEn ? (
+                        <Dia iso={extras[c.id]!.invitacionEnviadaEn!} prefijo={t.enviadaEl} />
+                      ) : (
+                        t.noEnviada
+                      )}
                     </p>
                     <p className="text-sm font-medium">{t.pendiente}</p>
                     <Reenviar contactId={c.id} nombre={c.name} t={t} />

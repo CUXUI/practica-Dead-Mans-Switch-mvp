@@ -2,14 +2,14 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { CONFIG_EMISOR } from "./config";
-import type { AdaptadorExtras, ExtrasAviso } from "./tipos";
+import type { AdaptadorExtras, DatosContacto, ExtrasAviso } from "./tipos";
 
 // Adaptador provisional: guarda los datos extra en un JSON local.
 // Solo para desarrollo en local (en Vercel el disco es de solo lectura).
 
 type Fichero = {
   avisos: Record<string, ExtrasAviso & { issuerId: string; actualizado: string }>;
-  relaciones: Record<string, { issuerId: string; relacion: string }>;
+  contactos: Record<string, DatosContacto & { issuerId: string }>;
 };
 
 const RUTA = path.resolve(process.cwd(), CONFIG_EMISOR.ficheroExtras);
@@ -18,9 +18,9 @@ async function leer(): Promise<Fichero> {
   try {
     const crudo = await fs.readFile(RUTA, "utf8");
     const datos = JSON.parse(crudo) as Partial<Fichero>;
-    return { avisos: datos.avisos ?? {}, relaciones: datos.relaciones ?? {} };
+    return { avisos: datos.avisos ?? {}, contactos: datos.contactos ?? {} };
   } catch {
-    return { avisos: {}, relaciones: {} };
+    return { avisos: {}, contactos: {} };
   }
 }
 
@@ -40,6 +40,12 @@ function modificar(cambio: (f: Fichero) => void): Promise<void> {
   return tarea;
 }
 
+function contacto(f: Fichero, issuerId: string, contactId: string) {
+  const previo = f.contactos[contactId];
+  if (previo && previo.issuerId !== issuerId) throw new Error("Contacto de otra persona");
+  return previo ?? { issuerId, relacion: null, invitacionEnviadaEn: null };
+}
+
 export const adaptadorFichero: AdaptadorExtras = {
   async leerAviso(issuerId, noticeId) {
     const f = await leer();
@@ -56,22 +62,25 @@ export const adaptadorFichero: AdaptadorExtras = {
     });
   },
 
-  async leerRelaciones(issuerId, contactIds) {
+  async leerContactos(issuerId, contactIds) {
     const f = await leer();
-    const out: Record<string, string> = {};
+    const out: Record<string, DatosContacto> = {};
     for (const id of contactIds) {
-      const r = f.relaciones[id];
-      if (r && r.issuerId === issuerId) out[id] = r.relacion;
+      const c = f.contactos[id];
+      if (c && c.issuerId === issuerId) out[id] = { relacion: c.relacion, invitacionEnviadaEn: c.invitacionEnviadaEn };
     }
     return out;
   },
 
   async guardarRelacion(issuerId, contactId, relacion) {
     await modificar((f) => {
-      const previo = f.relaciones[contactId];
-      if (previo && previo.issuerId !== issuerId) throw new Error("Contacto de otra persona");
-      if (relacion) f.relaciones[contactId] = { issuerId, relacion };
-      else delete f.relaciones[contactId];
+      f.contactos[contactId] = { ...contacto(f, issuerId, contactId), relacion };
+    });
+  },
+
+  async marcarInvitacion(issuerId, contactId, enviadaEn) {
+    await modificar((f) => {
+      f.contactos[contactId] = { ...contacto(f, issuerId, contactId), invitacionEnviadaEn: enviadaEn };
     });
   },
 };

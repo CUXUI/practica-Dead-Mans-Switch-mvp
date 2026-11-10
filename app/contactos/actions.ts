@@ -8,6 +8,7 @@ import { sendEmail } from "@/lib/email";
 import { textosContactos } from "@/components/contactos/textos";
 import { CONFIG_EMISOR } from "@/app/aviso/_datos/config";
 import { exigirSesion, type Sesion } from "@/app/aviso/_datos/sesion";
+import { adaptadorExtras } from "@/app/aviso/_datos/adaptador";
 
 // E5 · Invitar contactos. El contacto se guarda como `pending` con el hash del token;
 // el token en claro solo viaja en el enlace del correo.
@@ -28,6 +29,13 @@ function nuevoToken() {
 
 function escaparHtml(s: string) {
   return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+}
+
+// Guarda si la invitación salió (para no decir "enviada" cuando no salió).
+async function anotarEnvio(s: Sesion, contactId: string, enviado: boolean) {
+  await adaptadorExtras(s.supabase)
+    .marcarInvitacion(s.user.id, contactId, enviado ? new Date().toISOString() : null)
+    .catch((e) => console.error("[contactos] envío no anotado:", e instanceof Error ? e.message : e));
 }
 
 // Devuelve true solo si Resend aceptó el correo.
@@ -76,17 +84,22 @@ export async function invitarContacto(_prev: EstadoInvitar, form: FormData): Pro
   const position = [1, 2, 3, 4, 5].find((p) => !ocupadas.has(p))!;
   const { token, hash } = nuevoToken();
 
-  const { error: errInsert } = await s.supabase.from("contacts").insert({
-    issuer_id: s.user.id,
-    name,
-    email,
-    position,
-    status: "pending",
-    invite_token_hash: hash,
-  });
-  if (errInsert) return { error: t.errorGuardar, valores };
+  const { data: nuevo, error: errInsert } = await s.supabase
+    .from("contacts")
+    .insert({
+      issuer_id: s.user.id,
+      name,
+      email,
+      position,
+      status: "pending",
+      invite_token_hash: hash,
+    })
+    .select("id")
+    .single();
+  if (errInsert || !nuevo) return { error: t.errorGuardar, valores };
 
   const enviado = await enviarInvitacion(s, { name, email }, token);
+  await anotarEnvio(s, nuevo.id as string, enviado);
   revalidatePath("/contactos");
   redirect(enviado ? "/contactos?enviada=1" : "/contactos?fallo=1");
 }
@@ -109,6 +122,9 @@ export async function reenviarInvitacion(_prev: EstadoReenviar, form: FormData):
   const { token, hash } = nuevoToken();
   const { error } = await s.supabase.from("contacts").update({ invite_token_hash: hash }).eq("id", c.id);
   if (error) return { error: t.falloCorreo };
+  // El enlace anterior ya no vale: si este correo falla, la invitación queda sin enviar.
   const enviado = await enviarInvitacion(s, c, token);
+  await anotarEnvio(s, c.id, enviado);
+  revalidatePath("/contactos");
   return enviado ? { ok: true } : { error: t.falloCorreo };
 }

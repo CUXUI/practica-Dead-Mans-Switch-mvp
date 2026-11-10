@@ -5,7 +5,7 @@ import ConfigurarAviso, { type ContactoOpcion, type Inicial } from "@/components
 import { CONFIG_EMISOR, configVersion } from "./_datos/config";
 import { adaptadorExtras } from "./_datos/adaptador";
 import { avisoActual, exigirSesion } from "./_datos/sesion";
-import type { Frecuencia } from "./_datos/tipos";
+import type { DatosContacto, Frecuencia } from "./_datos/tipos";
 
 // E · Configurar aviso (Hora, Pasos, Contactos) + Resumen + Guardando.
 export default async function Aviso() {
@@ -25,13 +25,15 @@ export default async function Aviso() {
     .order("position");
   const contactos = filas ?? [];
   const extras = adaptadorExtras(s.supabase);
-  const relaciones = await extras.leerRelaciones(s.user.id, contactos.map((c) => c.id)).catch(() => ({}) as Record<string, string>);
+  const datosContactos = await extras
+    .leerContactos(s.user.id, contactos.map((c) => c.id))
+    .catch(() => ({}) as Record<string, DatosContacto>);
 
   const opciones: ContactoOpcion[] = contactos.map((c) => ({
     id: c.id,
     name: c.name,
     accepted: c.status === "accepted",
-    relacion: relaciones[c.id] ?? null,
+    relacion: datosContactos[c.id]?.relacion ?? null,
   }));
 
   let enAviso = opciones.map((c) => c.id);

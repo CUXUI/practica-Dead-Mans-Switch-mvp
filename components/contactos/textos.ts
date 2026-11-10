@@ -42,6 +42,7 @@ const COMUNES = {
     reenviada: "Invitación reenviada.",
     // El diseño no cubre que el correo falle. Nunca se dice "enviada" si no salió.
     falloCorreo: "Guardamos el contacto, pero no pudimos enviarle la invitación por correo. Prueba a reenviarla.",
+    noEnviada: "Invitación sin enviar",
     vacio: "Todavía no agregaste contactos.",
   },
   correo: {

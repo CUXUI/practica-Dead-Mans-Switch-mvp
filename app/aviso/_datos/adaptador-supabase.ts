@@ -2,12 +2,12 @@
 import type { createClient } from "@/lib/supabase/server";
 
 type SupabaseClient = Awaited<ReturnType<typeof createClient>>;
-import type { AdaptadorExtras } from "./tipos";
+import type { AdaptadorExtras, DatosContacto } from "./tipos";
 
 // Adaptador definitivo. Usa las tablas pedidas al núcleo (todavía NO existen):
 //   notice_extras   (notice_id, issuer_id, message, weekdays)
 //   notice_steps    (notice_id, issuer_id, position, body)
-//   contact_details (contact_id, issuer_id, relationship)
+//   contact_details (contact_id, issuer_id, relationship, invite_sent_at)
 // Se activa cambiando `adaptadorExtras` a "supabase" en config.ts.
 // Si el núcleo elige otros nombres de tabla o columna, solo se cambia este archivo.
 export function crearAdaptadorSupabase(supabase: SupabaseClient): AdaptadorExtras {
@@ -69,33 +69,35 @@ export function crearAdaptadorSupabase(supabase: SupabaseClient): AdaptadorExtra
       }
     },
 
-    async leerRelaciones(issuerId, contactIds) {
+    async leerContactos(issuerId, contactIds) {
       if (!contactIds.length) return {};
       const { data, error } = await supabase
         .from("contact_details")
-        .select("contact_id, relationship")
+        .select("contact_id, relationship, invite_sent_at")
         .eq("issuer_id", issuerId)
         .in("contact_id", contactIds);
-      if (error) throw new Error("No se pudieron leer las relaciones");
-      const out: Record<string, string> = {};
-      for (const r of data ?? []) if (r.relationship) out[r.contact_id as string] = r.relationship as string;
+      if (error) throw new Error("No se pudieron leer los datos de los contactos");
+      const out: Record<string, DatosContacto> = {};
+      for (const r of data ?? [])
+        out[r.contact_id as string] = {
+          relacion: (r.relationship as string | null) ?? null,
+          invitacionEnviadaEn: (r.invite_sent_at as string | null) ?? null,
+        };
       return out;
     },
 
     async guardarRelacion(issuerId, contactId, relacion) {
-      if (!relacion) {
-        const { error } = await supabase
-          .from("contact_details")
-          .delete()
-          .eq("contact_id", contactId)
-          .eq("issuer_id", issuerId);
-        if (error) throw new Error("No se pudo quitar la relación");
-        return;
-      }
       const { error } = await supabase
         .from("contact_details")
         .upsert({ contact_id: contactId, issuer_id: issuerId, relationship: relacion }, { onConflict: "contact_id" });
       if (error) throw new Error("No se pudo guardar la relación");
+    },
+
+    async marcarInvitacion(issuerId, contactId, enviadaEn) {
+      const { error } = await supabase
+        .from("contact_details")
+        .upsert({ contact_id: contactId, issuer_id: issuerId, invite_sent_at: enviadaEn }, { onConflict: "contact_id" });
+      if (error) throw new Error("No se pudo guardar el envío de la invitación");
     },
   };
 }

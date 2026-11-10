@@ -94,7 +94,7 @@ export function Tarjeta({
               {titulo}
             </h2>
           )}
-          {accion}
+          {accion && <div className="ml-auto">{accion}</div>}
         </div>
       )}
       {children}

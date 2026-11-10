@@ -13,9 +13,17 @@ export const EXTRAS_VACIOS: ExtrasAviso = { mensaje: "", pasos: [], dias: [] };
 export interface AdaptadorExtras {
   leerAviso(issuerId: string, noticeId: string): Promise<ExtrasAviso | null>;
   guardarAviso(issuerId: string, noticeId: string, extras: ExtrasAviso): Promise<void>;
-  leerRelaciones(issuerId: string, contactIds: string[]): Promise<Record<string, string>>;
+  leerContactos(issuerId: string, contactIds: string[]): Promise<Record<string, DatosContacto>>;
   guardarRelacion(issuerId: string, contactId: string, relacion: string | null): Promise<void>;
+  // Cuándo salió el último correo de invitación (null si falló). Sin esto no se puede decir "enviada".
+  marcarInvitacion(issuerId: string, contactId: string, enviadaEn: string | null): Promise<void>;
 }
+
+// Datos del contacto que todavía no tienen tabla propia.
+export type DatosContacto = {
+  relacion: string | null;
+  invitacionEnviadaEn: string | null;
+};
 
 export type Frecuencia = "once" | "daily" | "weekly";
 
