@@ -17,3 +17,6 @@ next-env.d.ts
 .DS_Store
 Thumbs.db
 .vercel
+
+# mise: configuración local
+mise.toml
