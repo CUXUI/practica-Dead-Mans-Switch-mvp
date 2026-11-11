@@ -3,16 +3,15 @@ import type { Variant } from "@/lib/brand";
 // Fichero de configuración del flujo de quien emite (alta, contactos, aviso e inicio).
 //
 // ADAPTADOR DE DATOS EXTRA
-// El diseño pide cuatro datos que todavía no tienen tabla en la base:
+// El diseño pide cuatro datos extra. Desde la migración 0010 ya tienen tabla:
 //   - mensaje del aviso (hasta 300 caracteres)
 //   - pasos a seguir (R6)
 //   - días elegidos ("Elegir días")
 //   - relación del contacto (Pareja, Papá…)
-// Mientras el núcleo no cree las tablas, se guardan en un fichero JSON local.
-// Cuando existan, basta con cambiar `adaptadorExtras` a "supabase".
+// Activo: "supabase". El adaptador "fichero" queda solo como respaldo local.
 // No hay que tocar pantallas ni acciones.
 export const CONFIG_EMISOR = {
-  adaptadorExtras: "fichero" as "fichero" | "supabase",
+  adaptadorExtras: "supabase" as "fichero" | "supabase",
 
   // Ruta del fichero JSON del adaptador "fichero" (ignorado por git).
   // En Vercel el disco es de solo lectura: este adaptador solo sirve en local.

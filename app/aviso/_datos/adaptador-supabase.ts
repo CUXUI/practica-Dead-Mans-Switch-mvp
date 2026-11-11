@@ -4,11 +4,11 @@ import type { createClient } from "@/lib/supabase/server";
 type SupabaseClient = Awaited<ReturnType<typeof createClient>>;
 import type { AdaptadorExtras, DatosContacto } from "./tipos";
 
-// Adaptador definitivo. Usa las tablas pedidas al núcleo (todavía NO existen):
+// Adaptador definitivo. Usa las tablas de la migración 0010 (ya aplicadas en la base):
 //   notice_extras   (notice_id, issuer_id, message, weekdays)
 //   notice_steps    (notice_id, issuer_id, position, body)
 //   contact_details (contact_id, issuer_id, relationship, invite_sent_at)
-// Se activa cambiando `adaptadorExtras` a "supabase" en config.ts.
+// Se activa con `adaptadorExtras: "supabase"` en config.ts.
 // Si el núcleo elige otros nombres de tabla o columna, solo se cambia este archivo.
 export function crearAdaptadorSupabase(supabase: SupabaseClient): AdaptadorExtras {
   return {
