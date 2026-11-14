@@ -1,18 +1,23 @@
 @import "tailwindcss";
 
 /*
-  TOKENS DE DISEÑO (placeholder). Reemplazar con los del equipo de diseño.
-  Usar siempre estos nombres en los componentes, nunca hex sueltos.
+  TOKENS DE DISEÑO (Supernova). El archivo tailwind.css lo genera Supernova: no editarlo a mano.
+  Acá solo se crean alias con los nombres que usan los componentes (AGENTS.md sección 5).
   Contraste mínimo: 4,5:1 texto, 3:1 controles.
 */
+@import "../tailwind.css";
+
 @theme {
-  --color-brand-primary: #1f4e5f;
-  --color-brand-on-primary: #ffffff;
-  --color-surface: #ffffff;
-  --color-surface-muted: #f3f5f6;
-  --color-text: #1a2326;
-  --color-text-muted: #4a5a60;
-  --color-border: #7a8a90;
+  --color-brand-primary: var(--color-accion-principal);
+  --color-brand-on-primary: var(--text-color-inverso);
+  --color-surface: var(--color-fondo-superficie);
+  --color-surface-muted: var(--color-fondo-lienzo);
+  --color-text: var(--text-color-principal);
+  --color-text-muted: var(--text-color-secundario);
+  --color-border: var(--color-borde-control);
+
+  /* PENDIENTE DE DISEÑO: Supernova no define token de error ni de éxito como color de texto.
+     Se mantienen los valores anteriores hasta que el equipo de diseño los defina. */
   --color-danger: #b3261e;
   --color-success: #1b6e3c;
 }

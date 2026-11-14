@@ -13,7 +13,9 @@
       "mcp__8486a5ed-44bf-48ee-bbe3-72662e1e378e__list_projects",
       "mcp__8486a5ed-44bf-48ee-bbe3-72662e1e378e__get_publishable_keys",
       "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 5; \"exit=$LASTEXITCODE\")",
-      "mcp__8486a5ed-44bf-48ee-bbe3-72662e1e378e__apply_migration"
+      "mcp__8486a5ed-44bf-48ee-bbe3-72662e1e378e__apply_migration",
+      "PowerShell(Set-Location 'C:\\\\Gaston\\\\comunidad UX\\\\practica-Dead-Mans-Switch-mvp'; foreach \\($f in 'tailwind.css','tailwind.base.css','tailwind.color-cerca.css'\\) { \"=== $f \\($\\(\\(Get-Item $f\\).Length\\) bytes\\) ===\"; Get-Content $f -TotalCount 25 }; \"=== app/globals.css existe: $\\(Test-Path 'app\\\\globals.css'\\) ===\")",
+      "PowerShell(Set-Location 'C:\\\\Gaston\\\\comunidad UX\\\\practica-Dead-Mans-Switch-mvp'; npx tsc --noEmit 2>&1 | Where-Object { $_ -notmatch 'npm notice' } | Select-Object -First 10; \"tsc exit=$LASTEXITCODE\"; npx next build 2>&1 | Select-Object -Last 25; \"build exit=$LASTEXITCODE\")"
     ]
   }
 }
