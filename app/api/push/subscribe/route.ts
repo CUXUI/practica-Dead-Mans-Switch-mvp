@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { clienteAdmin } from "@/lib/supabase/admin";
 
 // POST /api/push/subscribe  { endpoint, keys: { p256dh, auth } }
 // Guarda el dispositivo de la persona para recibir notificaciones push.
@@ -24,7 +25,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "Suscripción inválida" }, { status: 400 });
   }
 
-  const { error } = await supabase
+  // La persona ya está comprobada arriba. Se guarda con el cliente de administración porque la tabla no
+  // deja actualizar con la sesión: si el mismo móvil vuelve a activar (o cambia de usuario), la fila ya
+  // existe y un upsert normal falla. Así se queda a nombre de quien la activa ahora.
+  const db = clienteAdmin() ?? supabase;
+  const { error } = await db
     .from("push_subscriptions")
     .upsert(
       { issuer_id: user.id, endpoint, p256dh, auth },

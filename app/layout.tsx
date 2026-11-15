@@ -6,7 +6,8 @@ import PwaRegister from "@/components/pwa/PwaRegister";
 const brand = getBrand();
 
 export const metadata: Metadata = {
-  title: brand.name,
+  // Cada pantalla pone su título: "Tus contactos · Cerca".
+  title: { default: brand.name, template: `%s · ${brand.name}` },
   description: brand.description,
   applicationName: brand.name,
   appleWebApp: { capable: true, title: brand.name, statusBarStyle: "default" },
@@ -22,7 +23,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es">
-      <body className="min-h-screen antialiased">
+      <body className="min-h-dvh antialiased">
         <PwaRegister />
         {children}
       </body>

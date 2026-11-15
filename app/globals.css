@@ -22,6 +22,20 @@
   --color-success: #1b6e3c;
 }
 
+/* Tailwind 4 quita la mano de los botones. Lo pulsable tiene que parecerlo. */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+a[href],
+summary,
+select {
+  cursor: pointer;
+}
+
+button:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
 body {
   background: var(--color-surface-muted);
   color: var(--color-text);
