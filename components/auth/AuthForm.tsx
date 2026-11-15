@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { destinoTrasIngreso } from "@/components/alta/push";
 
 type Props = { mode: "login" | "registro" };
 
@@ -32,12 +33,13 @@ export default function AuthForm({ mode }: Props) {
       const { data: resolved } = await supabase.rpc("resolve_login_email", { identifier });
       if (!resolved) {
         setLoading(false);
-        return setError("No pudimos iniciar sesión. Revisá tu correo o usuario y contraseña.");
+        return setError("No pudimos iniciar sesión. Revisa tu correo o usuario y contraseña.");
       }
       const { error } = await supabase.auth.signInWithPassword({ email: resolved, password });
       setLoading(false);
-      if (error) return setError("No pudimos iniciar sesión. Revisá tu correo o usuario y contraseña.");
-      router.push("/home");
+      if (error) return setError("No pudimos iniciar sesión. Revisa tu correo o usuario y contraseña.");
+      // Flujo 1: si en este dispositivo nunca se pidió el permiso de notificaciones, va a ese paso.
+      router.push(destinoTrasIngreso());
       router.refresh();
       return;
     }

@@ -1,20 +1,7 @@
-import Link from "next/link";
-import AuthForm from "@/components/auth/AuthForm";
-import { getBrand } from "@/lib/brand";
+import { redirect } from "next/navigation";
 
+// El registro ahora vive en el flujo 1 (Alta de quien emite): /alta/registro.
+// Esta ruta se mantiene para no romper enlaces que ya apuntaban a /registro.
 export default function RegistroPage() {
-  const brand = getBrand();
-  return (
-    <main className="mx-auto max-w-md p-6">
-      <h1 className="mb-1 text-2xl font-semibold">Crear cuenta en {brand.name}</h1>
-      <p className="mb-6 text-text-muted">{brand.description}</p>
-      <AuthForm mode="registro" />
-      <p className="mt-6 text-sm">
-        ¿Ya tenés cuenta?{" "}
-        <Link href="/login" className="font-medium text-brand-primary underline">
-          Iniciar sesión
-        </Link>
-      </p>
-    </main>
-  );
+  redirect("/alta/registro");
 }
