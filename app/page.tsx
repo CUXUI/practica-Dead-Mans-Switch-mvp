@@ -6,5 +6,6 @@ export default async function Index() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  redirect(user ? "/home" : "/login");
+  // Sin sesión, la entrada es el inicio del flujo 1 (Alta): /alta.
+  redirect(user ? "/home" : "/alta");
 }
