@@ -16,9 +16,11 @@ import { rellenar } from "@/components/aviso/textos";
 // Inicio de quien emite: sin aviso → alta · apagado → Inicio apagado · encendido → Inicio activo.
 // En alerta → placeholder del núcleo con E6 (ver CONEXIÓN · Francis más abajo).
 //
-// CONEXIÓN · Alta (Sarah): sin aviso se manda a /alta, que no va en este PR. Lo que supuse: el alta
-// (comienzo y notificaciones) termina en /contactos/nuevo. Desde ahí sigue este flujo en modo alta
+// CONEXIÓN · Alta (Sarah): sin aviso, en mis pruebas se mandaba a /alta (comienzo y notificaciones), que no
+// va en este PR. Mientras no llegue, se manda directo a /contactos/nuevo para no caer en un 404.
+// Lo que supuse: el alta termina en /contactos/nuevo y desde ahí sigue este flujo en modo alta
 // ("sin aviso todavía"): primer contacto, contactos y configurar el aviso, que se guarda apagado.
+// Cuando llegue el alta, cambiar el redirect de abajo a "/alta".
 export async function generateMetadata() {
   return { title: textosInicio(getBrand().variant).titulo };
 }
@@ -46,7 +48,7 @@ export default async function HomePage({
 
   // Desvío tras el login (Figma: «¿Cómo está su aviso?»):
   // sin aviso → onboarding · apagado → Inicio apagado · encendido / en alerta → lo de abajo.
-  if (!aviso) redirect("/alta");
+  if (!aviso) redirect("/contactos/nuevo");
   if (aviso.state === "off") {
     const [{ data: filas }, extrasAviso, { data: todosAceptados }] = await Promise.all([
       supabase.from("notice_contacts").select("position, contacts(id, name, status, accepted_at)").eq("notice_id", aviso.id).order("position"),
