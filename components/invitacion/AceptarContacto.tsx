@@ -107,7 +107,7 @@ export default function AceptarContacto({
               <Boton variante="secundario" disabled={ocupado} onClick={() => respond("reject")}>
                 {state.submitting === "reject" ? t.enviando : t.rechazar}
               </Boton>
-              <p className="text-sm text-text-muted">{t.urgencia}</p>
+              <p className="text-sm text-text-muted">{t.aclaracion}</p>
             </>
           }
         >

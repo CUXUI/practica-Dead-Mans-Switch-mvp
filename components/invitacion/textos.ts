@@ -15,7 +15,7 @@ function comunes(appName: string) {
       implica: (emisor: string) => [
         "Mientras todo va bien, no recibes nada.",
         `Si ${emisor} no confirma, te llega una alerta por correo.`,
-        "La llamada la haces tú. La app no avisa a emergencias.",
+        "La llamada la haces tú. La app no llama ni envía mensajes por ti.",
         "No instalas nada ni creas cuenta.",
       ],
       notaSinConfirmar:
@@ -35,7 +35,7 @@ function comunes(appName: string) {
       aceptar: "Aceptar",
       rechazar: "No puedo",
       enviando: "Enviando…",
-      urgencia: `${appName} sirve para avisar a personas de confianza. Si hay una urgencia, llama primero a emergencias.`,
+      aclaracion: `${appName} sirve para avisar a personas de confianza. Si algo te preocupa ahora, llama primero a la persona directamente.`,
       errorEnvio: "No pudimos registrar tu respuesta. Revisa tu conexión e inténtalo de nuevo.",
     },
     acepto: {

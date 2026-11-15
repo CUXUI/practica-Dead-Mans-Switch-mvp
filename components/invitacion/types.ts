@@ -1,4 +1,5 @@
-export type InvitationStatus = "pending" | "accepted" | "rejected" | "expired" | "cancelled";
+// Estados reales de contacts.status (migración 0005). Una invitación solo se responde si está pending.
+export type InvitationStatus = "pending" | "accepted" | "rejected" | "removed";
 
 /** Lo único que la pantalla necesita saber de la invitación. Nunca incluye el token ni su hash. */
 export type InvitationView = {
@@ -15,11 +16,11 @@ export type Decision = "accept" | "reject";
 
 export type RespondResult =
   | { kind: "ok"; status: "accepted" | "rejected" }
-  | { kind: "inactive" }; // venció, la cancelaron o ya se respondió
+  | { kind: "inactive" }; // ya se respondió o la dieron de baja
 
 /**
- * Contrato con el núcleo. Quien recibe NO accede a tablas: se usa una función del núcleo
- * que valida el token contra `contacts.invite_token_hash` (AGENTS.md sección 6).
+ * Contrato con el núcleo. Quien recibe NO accede a tablas: se usan funciones que validan el token
+ * contra `contacts.invite_token_hash` (AGENTS.md sección 6).
  * Si no hay red, las funciones lanzan error y la pantalla ofrece reintentar.
  */
 export type ContactsApi = {

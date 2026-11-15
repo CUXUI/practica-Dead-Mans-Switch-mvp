@@ -1,31 +1,33 @@
-import type { ContactsApi, InvitationView } from "./types";
+import { createClient } from "@/lib/supabase/client";
+import type { ContactsApi, Decision, InvitationLookup, RespondResult } from "./types";
 
-// PROVISORIO. Datos ficticios en memoria para probar el flujo en la vista previa.
-// Tokens de prueba: demo-valida, demo-aceptada, demo-vencida.
-// TODO (núcleo): reemplazar por el adaptador real que llame a la función del núcleo que valida
-// el token (`contacts.invite_token_hash`) y notifica a quien emite. Hoy esa función no existe
-// en /supabase/migrations: queda como "Pregunta abierta" en el PR.
-
-const store: Record<string, InvitationView> = {
-  "demo-valida": { issuerName: "Mariana", contactEmail: "ana@ejemplo.com", status: "pending" },
-  "demo-aceptada": { issuerName: "Mariana", contactEmail: "ana@ejemplo.com", status: "accepted" },
-  "demo-vencida": { issuerName: "Mariana", contactEmail: "ana@ejemplo.com", status: "expired" },
-};
-
-const wait = (ms = 400) => new Promise((r) => setTimeout(r, ms));
-
+// Quien recibe no tiene cuenta. Ambas llamadas usan solo el token del enlace:
+// - lectura: función get_invitation (migración 0012), que devuelve lo mínimo para mostrar la invitación.
+// - respuesta: ruta /api/invitacion/responder, que llama a respond_invitation y avisa a quien emite.
 export const contactsApi: ContactsApi = {
-  async getInvitation(token) {
-    await wait();
-    const invitation = store[token];
-    return invitation ? { kind: "found", invitation: { ...invitation } } : { kind: "not_found" };
+  async getInvitation(token): Promise<InvitationLookup> {
+    const supabase = createClient();
+    const { data, error } = await supabase.rpc("get_invitation", { p_token: token });
+    if (error) throw new Error("No pudimos abrir la invitación");
+    const row = Array.isArray(data) ? data[0] : null;
+    if (!row) return { kind: "not_found" };
+    return {
+      kind: "found",
+      invitation: {
+        issuerName: row.issuer_name ?? "",
+        contactEmail: row.contact_email,
+        status: row.status,
+      },
+    };
   },
-  async respond(token, decision) {
-    await wait();
-    const invitation = store[token];
-    if (!invitation || invitation.status !== "pending") return { kind: "inactive" };
-    const status = decision === "accept" ? "accepted" : "rejected";
-    store[token] = { ...invitation, status };
-    return { kind: "ok", status };
+
+  async respond(token: string, decision: Decision): Promise<RespondResult> {
+    const res = await fetch("/api/invitacion/responder", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token, decision }),
+    });
+    if (!res.ok) throw new Error("No pudimos registrar tu respuesta");
+    return (await res.json()) as RespondResult;
   },
 };
