@@ -55,15 +55,15 @@ async function enviarInvitacion(s: Sesion, contacto: { name: string; email: stri
   const t = textosContactos(brand.variant).correo;
   const { data: perfil } = await s.supabase.from("profiles").select("full_name").eq("id", s.user.id).single();
   const quien = escaparHtml(perfil?.full_name?.trim() || "Una persona");
-  // CONEXIÓN · Luna (invitación y aceptarla por enlace, R1): la página /invitacion no va en este PR.
-  // Lo que supuse:
-  //  - El enlace es /invitacion?token=<token>. El token va solo en el correo. En la base se guarda su
+  // El enlace va a la página de aceptar (R1): app/invitacion/[token]. El token va en la ruta, no en la consulta.
+  // Reglas:
+  //  - El enlace es /invitacion/<token>. El token va solo en el correo. En la base se guarda su
   //    SHA-256 en hex (contacts.invite_token_hash), igual que alert_recipients.token_hash.
   //  - Reenviar o cambiar el correo genera un token nuevo: el enlace anterior deja de valer.
   //  - Al aceptar, la página pone contacts.status = "accepted" y accepted_at. Al rechazar, "rejected".
   //    Solo si la invitación sigue "pending". Contactos e Inicio leen esos estados al entrar.
   //  - El mensaje propio de la invitación está en contact_details.invite_message (vacío = "General").
-  const enlace = `${appUrl}/invitacion?token=${encodeURIComponent(token)}`;
+  const enlace = `${appUrl}/invitacion/${encodeURIComponent(token)}`;
   try {
     await sendEmail({
       to: contacto.email,
