@@ -1,7 +1,7 @@
 // Solo servidor. Lee el historial de quien emite (E7) con su sesión: el RLS de la base hace que
 // cada consulta devuelva únicamente lo suyo.
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Destinatario, EntradaHistorial } from "@/components/historial/tipos";
+import type { Destinatario, EntradaHistorial, TipoAviso } from "@/components/historial/tipos";
 
 export const LIMITE = 50;
 
@@ -13,12 +13,27 @@ const EVENTOS_QUE_CUENTAN_COMO_VISTO = ["link_opened", "button_tap"] as const;
 type Fila<T> = { data: T[] | null; error: { message: string } | null };
 
 export async function leerHistorial(supabase: SupabaseClient, userId: string): Promise<{ ok: true; entradas: EntradaHistorial[] } | { ok: false }> {
-  const [conf, alertas] = (await Promise.all([
-    supabase.from("confirmations").select("id, confirmed_at, source").eq("issuer_id", userId).order("confirmed_at", { ascending: false }).limit(LIMITE),
-    supabase.from("alerts").select("id, started_at, outcome").eq("issuer_id", userId).order("started_at", { ascending: false }).limit(LIMITE),
-  ])) as [Fila<{ id: string; confirmed_at: string; source: "app" | "notification" }>, Fila<{ id: string; started_at: string; outcome: "open" | "closed" | "unresolved" }>];
+  const [conf, alertas, avisos] = (await Promise.all([
+    supabase.from("confirmations").select("id, notice_id, confirmed_at, source").eq("issuer_id", userId).order("confirmed_at", { ascending: false }).limit(LIMITE),
+    supabase.from("alerts").select("id, notice_id, started_at, closed_at, expires_at, outcome").eq("issuer_id", userId).order("started_at", { ascending: false }).limit(LIMITE),
+    supabase.from("notices").select("id, kind").eq("issuer_id", userId),
+  ])) as [
+    Fila<{ id: string; notice_id: string | null; confirmed_at: string; source: "app" | "notification" }>,
+    Fila<{ id: string; notice_id: string; started_at: string; closed_at: string | null; expires_at: string | null; outcome: "open" | "closed" | "unresolved" }>,
+    Fila<{ id: string; kind: "routine" | "trip" }>,
+  ];
 
-  if (conf.error || alertas.error) return { ok: false };
+  if (conf.error || alertas.error || avisos.error) return { ok: false };
+
+  const tipoDeAviso = new Map((avisos.data ?? []).map((a) => [a.id, a.kind] as const));
+  const tipo = (id: string | null): TipoAviso => (id ? (tipoDeAviso.get(id) ?? null) : null);
+
+  // Cancelar una alerta (E6) también deja una confirmación. Esa confirmación y la alerta cerrada cuentan
+  // lo mismo: se muestra solo la alerta, que ya dice a qué hora la cerraste.
+  const cierres = (alertas.data ?? []).filter((a) => a.closed_at).map((a) => ({ aviso: a.notice_id, en: new Date(a.closed_at as string).getTime() }));
+  const confirmaciones = (conf.data ?? []).filter(
+    (c) => !cierres.some((x) => x.aviso === c.notice_id && Math.abs(new Date(c.confirmed_at).getTime() - x.en) <= 60_000)
+  );
 
   const ids = (alertas.data ?? []).map((a) => a.id);
   const destinatariosPorAlerta = new Map<string, Destinatario[]>();
@@ -53,12 +68,15 @@ export async function leerHistorial(supabase: SupabaseClient, userId: string): P
   }
 
   const entradas: EntradaHistorial[] = [
-    ...(conf.data ?? []).map((c) => ({ tipo: "confirmacion" as const, id: c.id, cuando: c.confirmed_at, origen: c.source })),
+    ...confirmaciones.map((c) => ({ tipo: "confirmacion" as const, id: c.id, cuando: c.confirmed_at, origen: c.source, aviso: tipo(c.notice_id) })),
     ...(alertas.data ?? []).map((a) => ({
       tipo: "alerta" as const,
       id: a.id,
       cuando: a.started_at,
       resultado: a.outcome,
+      aviso: tipo(a.notice_id),
+      cerradaEn: a.closed_at,
+      venceEn: a.expires_at,
       destinatarios: destinatariosPorAlerta.get(a.id) ?? [],
     })),
   ]
