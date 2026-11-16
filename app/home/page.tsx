@@ -123,9 +123,9 @@ export default async function HomePage({
     return (
       <main className="mx-auto max-w-md space-y-6 p-6">
         <section aria-labelledby="alerta-en-curso" className="space-y-3 rounded-lg border-2 border-danger bg-surface p-4">
-          <h2 id="alerta-en-curso" className="text-lg font-semibold">
+          <h1 id="alerta-en-curso" className="text-lg font-semibold">
             {textos.alertaTitulo}
-          </h2>
+          </h1>
           <p className="text-text-muted">{textos.alertaCuerpo}</p>
           <CancelarAlerta textos={textos} />
         </section>

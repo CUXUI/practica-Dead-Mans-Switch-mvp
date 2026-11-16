@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 // Acción deliberada (AGENTS.md): mantener presionado 2 s. Ningún toque suelto ejecuta nada.
 // Con lector de pantalla o teclado no se puede "mantener": la activación asistida (un clic
 // sin puntero, event.detail === 0) pasa a un paso de confirmación con botones normales.
+// El foco va a la pregunta al abrirla y vuelve al botón con "Volver", para no perderse.
 export default function HoldButton({
   label,
   help,
@@ -31,6 +32,15 @@ export default function HoldButton({
   const raf = useRef<number | null>(null);
   const startedAt = useRef(0);
   const finished = useRef(false);
+  const helpId = useId();
+  const question = useRef<HTMLParagraphElement>(null);
+  const holdButton = useRef<HTMLButtonElement>(null);
+  const reopened = useRef(false);
+
+  useEffect(() => {
+    if (confirming) question.current?.focus();
+    else if (reopened.current) holdButton.current?.focus();
+  }, [confirming]);
 
   function stopFrame() {
     if (raf.current !== null) cancelAnimationFrame(raf.current);
@@ -84,7 +94,9 @@ export default function HoldButton({
   if (confirming) {
     return (
       <div role="group" aria-label={confirmQuestion} className="space-y-3">
-        <p className="font-medium">{confirmQuestion}</p>
+        <p ref={question} tabIndex={-1} className="font-medium">
+          {confirmQuestion}
+        </p>
         <div className="flex flex-col gap-3 sm:flex-row">
           <button
             type="button"
@@ -95,7 +107,10 @@ export default function HoldButton({
           </button>
           <button
             type="button"
-            onClick={() => setConfirming(false)}
+            onClick={() => {
+              reopened.current = true;
+              setConfirming(false);
+            }}
             className="min-h-11 flex-1 rounded-lg border border-border px-4 py-2 font-medium"
           >
             {confirmBack}
@@ -108,8 +123,9 @@ export default function HoldButton({
   return (
     <div className="space-y-2">
       <button
+        ref={holdButton}
         type="button"
-        aria-describedby="hold-help"
+        aria-describedby={helpId}
         disabled={busy}
         onPointerDown={startHold}
         onPointerUp={cancelHold}
@@ -126,7 +142,7 @@ export default function HoldButton({
         />
         <span className="relative">{busy ? busyLabel : label}</span>
       </button>
-      <p id="hold-help" className="text-sm text-text-muted">
+      <p id={helpId} className="text-sm text-text-muted">
         {help}
       </p>
     </div>
