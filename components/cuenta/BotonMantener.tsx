@@ -90,7 +90,7 @@ export default function BotonMantener({
         onContextMenu={(e) => e.preventDefault()}
         onClick={alHacerClic}
         className={`relative inline-flex min-h-12 w-full touch-none select-none items-center justify-center overflow-hidden rounded-[var(--spacing-radio-m)] border-2 px-espacio-xl text-base font-bold leading-6 disabled:cursor-not-allowed disabled:border-accion-desactivada disabled:bg-accion-desactivada disabled:text-[var(--text-color-sobre-desactivada)] focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-foco-anillo ${
-          progreso > 0 ? "border-brand-primary bg-surface text-text" : "border-brand-primary bg-brand-primary text-brand-on-primary"
+          progreso > 0 ? "border-fondo-inverso bg-surface text-text" : "border-fondo-inverso bg-fondo-inverso text-brand-on-primary"
         }`}
       >
         <span className="relative">{texto}</span>
