@@ -1,25 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Receiver } from "@upstash/qstash";
 import { createClient } from "@supabase/supabase-js";
 import { sendEmail } from "@/lib/email";
 import { getBrand } from "@/lib/brand";
 import { sendPushToUser } from "@/lib/push";
+import {
+  MINUTOS_ENTRE_CONTACTOS,
+  HORAS_VENCIMIENTO,
+  avisarAContacto,
+  contactosDelAviso,
+  firmaValida,
+  programarLlamada,
+} from "@/lib/motor";
 
 // POST /api/alert
-// Lo llama QStash a la hora programada. No hay sesión de usuario: por eso usa la
-// service_role (solo servidor) y verifica la firma de QStash antes de hacer nada.
+// Lo llama QStash al acabar el tiempo de gracia, si nadie confirmó (E1, S1).
+// Abre la alerta (estado "alert"), avisa al primer contacto, programa el siguiente y el vencimiento (S2, S5).
+// No hay sesión de usuario: usa la service_role (solo servidor) y verifica la firma de QStash.
 export const runtime = "nodejs";
+
+const MS_HORA = 60 * 60 * 1000;
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
-
-  const receiver = new Receiver({
-    currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY ?? "",
-    nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY ?? "",
-  });
-  try {
-    await receiver.verify({ signature: req.headers.get("upstash-signature") ?? "", body });
-  } catch {
+  if (!(await firmaValida(req, body))) {
     return NextResponse.json({ ok: false, error: "Firma inválida" }, { status: 401 });
   }
 
@@ -62,53 +65,82 @@ export async function POST(req: NextRequest) {
   if (!to) {
     return NextResponse.json({ ok: false, error: "La persona no tiene correo" }, { status: 500 });
   }
-
   const brand = getBrand();
-  const when = new Date(notice.fire_at).toLocaleString("es-AR", {
-    timeZone: "America/Argentina/Buenos_Aires",
-  });
 
-  try {
-    await sendEmail({
-      to,
-      subject: `${brand.name}: se disparó tu aviso`,
-      html: `<p>Tu aviso programado para las <strong>${when}</strong> se disparó.</p>
-             <p>Si estás bien, entrá a la app y confirmalo.</p>`,
-    });
-  } catch (e) {
-    // 5xx para que QStash reintente.
-    const message = e instanceof Error ? e.message : "Error desconocido";
-    return NextResponse.json({ ok: false, error: message }, { status: 502 });
-  }
-
-  const { error: updateErr } = await admin
-    .from("notices")
-    .update({ state: "alert", updated_at: new Date().toISOString() })
-    .eq("id", notice.id)
-    .eq("state", "active");
-  if (updateErr) {
-    return NextResponse.json({ ok: false, error: "Correo enviado, pero no se actualizó el estado" }, { status: 500 });
-  }
-
-  // Fila de la alerta: la que cierra /api/alerta/cancelar y la que usa el historial (E7).
-  // Vence a las 48 h si nadie la cierra (S5, decidido).
+  // 1. Abrir la alerta: el aviso pasa a "alert". Solo una vez (filtro por estado).
   const ahora = new Date();
-  const { error: alertaErr } = await admin.from("alerts").insert({
-    notice_id: notice.id,
-    issuer_id: notice.issuer_id,
-    started_at: ahora.toISOString(),
-    expires_at: new Date(ahora.getTime() + 48 * 60 * 60 * 1000).toISOString(),
-    outcome: "open",
-    last_stage: 1,
-  });
-  if (alertaErr) console.error("[alert] no se pudo crear la fila de alerts:", alertaErr.message);
+  const { error: updateErr, data: abierto } = await admin
+    .from("notices")
+    .update({ state: "alert", updated_at: ahora.toISOString() })
+    .eq("id", notice.id)
+    .eq("state", "active")
+    .select("id");
+  if (updateErr) {
+    return NextResponse.json({ ok: false, error: "No se pudo abrir la alerta" }, { status: 500 });
+  }
+  if (!abierto || abierto.length === 0) {
+    return NextResponse.json({ ok: true, skipped: true });
+  }
 
-  // Push al celular (canal principal). Si falla, el correo ya salió: no reintentamos por esto.
-  const push = await sendPushToUser(admin, notice.issuer_id, {
+  // 2. Fila de la alerta (E7, cancelación E6, vencimiento S5).
+  const { data: alertaFila, error: alertaErr } = await admin
+    .from("alerts")
+    .insert({
+      notice_id: notice.id,
+      issuer_id: notice.issuer_id,
+      started_at: ahora.toISOString(),
+      expires_at: new Date(ahora.getTime() + HORAS_VENCIMIENTO * MS_HORA).toISOString(),
+      outcome: "open",
+      last_stage: 1,
+    })
+    .select("id")
+    .single();
+  if (alertaErr || !alertaFila) {
+    return NextResponse.json({ ok: false, error: "No se pudo registrar la alerta" }, { status: 500 });
+  }
+  const alertaId = alertaFila.id as string;
+
+  // 3. Destinatarios: los contactos aceptados, en orden. Se marcan como avisados al enviar.
+  const contactos = await contactosDelAviso(admin, notice.id);
+  if (contactos.length > 0) {
+    const { error: destErr } = await admin
+      .from("alert_recipients")
+      .insert(contactos.map((c) => ({ alert_id: alertaId, contact_id: c.id })));
+    if (destErr) console.error("[alert] no se pudieron registrar los destinatarios:", destErr.message);
+  }
+
+  // 4. Avisar a quien emite (correo y push). Si falla, la alerta sigue: el correo es respaldo.
+  const quien = (await admin.from("profiles").select("full_name").eq("id", notice.issuer_id).maybeSingle()).data
+    ?.full_name?.trim() || "Tu aviso";
+  await sendEmail({
+    to,
+    subject: `${brand.name}: se disparó tu aviso`,
+    html: `<p>Tu aviso se disparó porque no confirmaste que estás bien.</p>
+           <p>Estamos avisando a tus contactos de confianza. Si estás bien, entrá a la app y cancelá la alerta.</p>`,
+  }).catch((e) => console.error("[alert] correo a quien emite falló:", e));
+  await sendPushToUser(admin, notice.issuer_id, {
     title: brand.name,
-    body: "Se disparó tu aviso. Entrá a la app para confirmar que estás bien.",
+    body: "Se disparó tu aviso. Entrá a la app para cancelar la alerta si estás bien.",
     url: "/home",
   }).catch(() => ({ sent: 0 }));
 
-  return NextResponse.json({ ok: true, push_sent: push.sent });
+  // 5. Primer contacto ahora. El resto, de a uno, cada MINUTOS_ENTRE_CONTACTOS (S2).
+  if (contactos.length > 0) {
+    await avisarAContacto(admin, alertaId, contactos[0], quien);
+  }
+  if (contactos.length > 1) {
+    const proximo = new Date(ahora.getTime() + MINUTOS_ENTRE_CONTACTOS * 60 * 1000);
+    await programarLlamada("/api/alert/siguiente", { alert_id: alertaId, posicion: 2 }, proximo).catch((e) =>
+      console.error("[alert] no se pudo programar el siguiente contacto:", e)
+    );
+  }
+
+  // 6. Vencimiento por tiempo si nadie la cierra (S5).
+  await programarLlamada(
+    "/api/alert/vencer",
+    { alert_id: alertaId },
+    new Date(ahora.getTime() + HORAS_VENCIMIENTO * MS_HORA)
+  ).catch((e) => console.error("[alert] no se pudo programar el vencimiento:", e));
+
+  return NextResponse.json({ ok: true, contactos_avisados: contactos.length > 0 ? 1 : 0 });
 }

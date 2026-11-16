@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { createClient as createAdmin } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { clienteAdmin } from "@/lib/supabase/admin";
 import { getBrand } from "@/lib/brand";
 import { sendEmail } from "@/lib/email";
 import { textosCuenta } from "@/components/cuenta/textos";
@@ -13,8 +13,8 @@ import { cancelarProgramado } from "@/app/aviso/_datos/qstash";
 // suyo (perfil, avisos, contactos, confirmaciones, alertas, dispositivos) porque las tablas se
 // borran en cascada. Solo responde ok cuando el servidor borró la cuenta (E1).
 //
-// PREGUNTA ABIERTA para el núcleo: usa la clave de servidor (service_role) y lib/email desde una ruta
-// propia de este flujo. Si prefieren que esto viva en el motor, se mueve sin cambiar la pantalla.
+// La clave de servidor (service_role) se usa solo a través de clienteAdmin() (lib/supabase/admin.ts),
+// que es la pieza que controla el núcleo. Esta ruta no arma su propio cliente con la clave.
 export const runtime = "nodejs";
 
 const escapar = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -31,11 +31,10 @@ export async function POST() {
   const marca = getBrand();
   const t = textosCuenta(marca.variant);
 
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!serviceKey) {
+  const admin = clienteAdmin();
+  if (!admin) {
     return NextResponse.json({ ok: false, error: t.errorGenerico }, { status: 500 });
   }
-  const admin = createAdmin(process.env.NEXT_PUBLIC_SUPABASE_URL!, serviceKey, { auth: { persistSession: false } });
 
   // 1. Con una alerta en curso no se borra: los contactos ya fueron avisados y tienen que poder verla cerrarse.
   //    PREGUNTA ABIERTA de producto: el PRD no dice qué pasa si se borra la cuenta en plena alerta.
