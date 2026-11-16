@@ -21,6 +21,19 @@ import { rellenar } from "@/components/aviso/textos";
 // Lo que supuse: el alta termina en /contactos/nuevo y desde ahí sigue este flujo en modo alta
 // ("sin aviso todavía"): primer contacto, contactos y configurar el aviso, que se guarda apagado.
 // Cuando llegue el alta, cambiar el redirect de abajo a "/alta".
+// Hora de la última confirmación, si es de hace menos de 15 minutos (la que se acaba de guardar).
+async function ultimaConfirmacion(supabase: Awaited<ReturnType<typeof createClient>>, issuerId: string) {
+  const { data } = await supabase
+    .from("confirmations")
+    .select("confirmed_at")
+    .eq("issuer_id", issuerId)
+    .gte("confirmed_at", new Date(Date.now() - 15 * 60_000).toISOString())
+    .order("confirmed_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return (data?.confirmed_at as string | undefined) ?? undefined;
+}
+
 export async function generateMetadata() {
   return { title: textosInicio(getBrand().variant).titulo };
 }
@@ -38,9 +51,12 @@ export default async function HomePage({
   if (!user) redirect("/login");
 
   // El perfil y el aviso se piden a la vez: cada consulta es un viaje a la base.
-  const [{ data: profile }, aviso] = await Promise.all([
+  // Justo después de "Estoy bien" (E1) también la última confirmación: la hora que se muestra es la
+  // que guardó el servidor. Si no hay una reciente, no se muestra nada (nunca "confirmado" sin servidor).
+  const [{ data: profile }, aviso, confirmadoEn] = await Promise.all([
     supabase.from("profiles").select("full_name, phone").eq("id", user.id).single(),
     avisoActual({ supabase, user }),
+    confirmado === "1" ? ultimaConfirmacion(supabase, user.id) : Promise.resolve(undefined),
   ]);
 
   const brand = getBrand();
@@ -88,6 +104,7 @@ export default async function HomePage({
         aceptados={aceptados}
         apagadoAhora={apagado === "1"}
         canceladaAhora={alerta === "cancelada" ? textos.canceladaTitulo : undefined}
+        confirmadoEn={confirmadoEn}
         plazo={{ fireAt: aviso.fire_at, frecuencia: aviso.recurrence as Frecuencia, dias: extrasAviso?.dias ?? [] }}
         pendientes={contactos.filter((c) => c.status === "pending" && enviada(c)).map((c) => primerNombre(c.name))}
         sinEnviar={contactos.filter((c) => c.status === "pending" && !enviada(c)).map((c) => primerNombre(c.name))}
@@ -106,9 +123,9 @@ export default async function HomePage({
     return (
       <main className="mx-auto max-w-md space-y-6 p-6">
         <section aria-labelledby="alerta-en-curso" className="space-y-3 rounded-lg border-2 border-danger bg-surface p-4">
-          <h2 id="alerta-en-curso" className="text-lg font-semibold">
+          <h1 id="alerta-en-curso" className="text-lg font-semibold">
             {textos.alertaTitulo}
-          </h2>
+          </h1>
           <p className="text-text-muted">{textos.alertaCuerpo}</p>
           <CancelarAlerta textos={textos} />
         </section>
@@ -124,7 +141,7 @@ export default async function HomePage({
       app={brand.name}
       nombre={primerNombre(profile?.full_name ?? "")}
       encendidoAhora={encendido === "1"}
-      confirmadoAhora={confirmado === "1"}
+      confirmadoEn={confirmadoEn}
       graciaMin={(aviso.grace_minutes as number | null) ?? 0}
       plazo={{ fireAt: aviso.fire_at, frecuencia: aviso.recurrence as Frecuencia, dias: extrasAviso?.dias ?? [] }}
     />
