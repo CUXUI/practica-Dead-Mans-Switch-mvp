@@ -7,6 +7,7 @@ import type { Frecuencia } from "@/app/aviso/_datos/tipos";
 import { rellenar } from "@/components/aviso/textos";
 import BarraNavegacion from "./BarraNavegacion";
 import SincronizarNotificaciones from "./SincronizarNotificaciones";
+import ConfirmacionHecha from "./ConfirmacionHecha";
 import ControlAviso from "./ControlAviso";
 import type { TextosInicio } from "./textosInicio";
 
@@ -37,9 +38,12 @@ export default function InicioApagado({
   aceptadosFuera = [],
   salieron = [],
   canceladaAhora,
+  confirmadoEn,
   plazo,
   apagadoAhora,
 }: {
+  // "Solo hoy" recién confirmado (E1): el aviso se apagó. Hora guardada en el servidor.
+  confirmadoEn?: string;
   aceptadosFuera?: string[];
   // Tras cancelar una falsa alarma: aviso breve ("Cancelaste la alerta").
   canceladaAhora?: string;
@@ -69,6 +73,7 @@ export default function InicioApagado({
         {apagadoAhora && <Toast texto={t.apagadoListo} quitarParametro="apagado" />}
         <Encabezado nombre={app} />
         <h1 className="text-2xl font-semibold">{nombre ? rellenar(t.hola, { nombre }) : t.holaSinNombre}</h1>
+        {confirmadoEn && <ConfirmacionHecha t={t} confirmadoEn={confirmadoEn} proximo={null} />}
         <Tarjeta>
           {/* Jerarquía: 1) qué es (título y Editar), 2) en qué estado está y qué hacer, 3) avisos aparte. */}
           <div className="flex items-center justify-between gap-2">

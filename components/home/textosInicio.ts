@@ -64,11 +64,29 @@ const COMUNES = {
   noSePuedeTexto: "Confirma que estás bien antes de las {hasta} Hasta entonces no puedes apagar ni editar tu aviso.",
   // Estoy bien (E-08), dentro de los 30 min previos.
   confirmando: "Confirmando…",
-  confirmadoToast: "Confirmaste que estás bien",
+  // Resultado de "Estoy bien" (E1): hora guardada en el servidor y próximo plazo. Informa, no celebra.
+  confirmado: {
+    titulo: "Confirmaste que estás bien",
+    registrada: "Registramos tu confirmación {cuando}.",
+    proximo: "Tu próximo plazo es {cuando}.",
+    soloHoy: "Tu aviso era solo por hoy, así que quedó apagado. Puedes encenderlo otra vez cuando quieras.",
+    hoy: "hoy",
+    manana: "mañana",
+    elDia: "el {dia}",
+    aLas: "a las {hora}",
+    aLa: "a la {hora}",
+  },
   confirmar: {
     error: "No pudimos registrar tu confirmación. Revisa tu conexión e inténtalo otra vez.",
     temprano: "Todavía no es hora de confirmar.",
     tarde: "La hora de confirmar ya pasó.",
+    enAlerta: "Tu aviso tiene una alerta en curso. Para confirmar que estás bien, usa \"Estoy bien, cancelar alerta\".",
+    // Sin conexión o falla del servidor: se dice que NO se registró y se reintenta solo.
+    sinRed: "No se registró tu confirmación porque no hay conexión. Lo intentaremos otra vez en cuanto vuelva la señal.",
+    reintentando: "No se registró tu confirmación. Lo intentaremos otra vez en unos segundos.",
+    reintentarAhora: "Reintentar ahora",
+    // El aviso cambió en otro dispositivo o pestaña: se recarga Inicio para ver el estado real.
+    cambio: "Tu aviso cambió mientras confirmabas. Revisa su estado en Inicio.",
   },
   encender: {
     // El título ya dice "No pudimos encender tu aviso": aquí solo la segunda parte.

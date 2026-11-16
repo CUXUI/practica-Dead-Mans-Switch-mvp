@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useTransition, type ReactNode } from "reac
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { encenderAviso, apagarAviso } from "@/app/aviso/encender";
+import { confirmarAviso, type ResultadoConfirmar } from "@/app/home/confirmar";
 import { CONFIG_EMISOR } from "@/app/aviso/_datos/config";
 import { horaCorta, proximoPlazo } from "@/app/aviso/_datos/formato";
 import { rellenar } from "@/components/aviso/textos";
@@ -17,20 +18,19 @@ import type { TextosInicio } from "./textosInicio";
 // aparte que está desactivado con el aviso encendido y se activa al apagarlo (decisión de Mariola 14/11).
 // Los errores no se esconden: "Reintentar".
 
-// CONEXIÓN · Francis ("Estoy bien", E1 y E-08): la acción de confirmar no va en este PR. Este botón vive
-// en el Inicio activo (desde 30 min antes de la hora hasta el final del tiempo de gracia) y espera una
-// server action con esta firma:
-//   confirmarEstoyBien(): Promise<{ ok: true } | { ok: false; error: string }>
-// Lo que supuse que hace: guardar la confirmación (checkin), pasar el aviso a su siguiente plazo y
-// reprogramar QStash ("Solo hoy" termina y apaga el aviso). Solo devuelve ok cuando el servidor lo guardó (E1).
-// Con ok, este componente va a /home?confirmado=1 e Inicio activo enseña "Confirmado".
-// Hasta conectarla, el botón responde con el error de siempre (t.confirmar.error) y no da nada por confirmado.
-async function confirmarEstoyBien(): Promise<{ ok: true } | { ok: false; error: string }> {
-  return { ok: false, error: "" };
-}
+// "Estoy bien" (E1 y E-08). Vive en el Inicio activo, desde 30 min antes de la hora hasta el final del
+// tiempo de gracia, y llama a la server action confirmarAviso (app/home/confirmar.ts): guarda la
+// confirmación, pasa el aviso a su próximo plazo y reprograma QStash ("Solo hoy" termina y apaga el aviso).
+// Solo con ok va a /home?confirmado=1, donde Inicio enseña la hora guardada y el próximo plazo.
+// Si no llega (sin conexión o falla del servidor), dice que NO se registró y reintenta solo (E1).
+
+// Esperas entre reintentos automáticos; la última se repite hasta que se cierra la ventana para confirmar.
+const PAUSAS_MS = [5_000, 15_000, 30_000, 60_000];
+
+const hhmmDe = (d: Date) => `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 
 function horaDe(d: Date) {
-  return horaCorta(`${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`);
+  return horaCorta(hhmmDe(d));
 }
 
 type Fase = "reposo" | "enviando" | "error" | "confirmando";
@@ -72,6 +72,12 @@ export default function ControlAviso({
   const [enGracia, setEnGracia] = useState(false);
   const [confirmando, setConfirmando] = useState(false);
   const [errorConfirmar, setErrorConfirmar] = useState<string | null>(null);
+  // Reintento automático pendiente: "red" espera a que vuelva la conexión; "pronto", a que pase la pausa.
+  const [espera, setEspera] = useState<"red" | "pronto" | null>(null);
+  const intentos = useRef(0);
+  const temporizador = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const enviando = useRef(false);
+  const confirmarRef = useRef<() => void>(() => {});
   const aviso = useRef<HTMLDivElement>(null);
   const pregunta = useRef<HTMLParagraphElement>(null);
 
@@ -135,22 +141,81 @@ export default function ControlAviso({
     });
   }
 
-  // "Estoy bien": solo se da por hecho cuando el servidor lo guardó.
-  function confirmar() {
-    setConfirmando(true);
-    setErrorConfirmar(null);
-    empezar(async () => {
-      const r = await confirmarEstoyBien().catch(() => ({ ok: false as const, error: t.confirmar.error }));
-      if (!r.ok && !r.error) r.error = t.confirmar.error;
-      if (r.ok) {
-        router.replace("/home?confirmado=1");
-        router.refresh();
-      } else {
-        setErrorConfirmar(r.error);
-        setConfirmando(false);
-      }
-    });
+  // Próximo plazo en la hora local del navegador (el servidor no conoce la zona horaria y lo valida).
+  // Se cuenta desde el plazo actual, así que con "Todos los días" es el mismo día, mañana.
+  function calcularProximo(): string | null {
+    if (frecuencia === "once") return null;
+    const actual = new Date(fireAt);
+    return proximoPlazo(hhmmDe(actual), frecuencia, dias, actual)?.toISOString() ?? null;
   }
+
+  // "Estoy bien" (firma acordada): solo se da por hecho cuando el servidor lo guardó.
+  async function confirmarEstoyBien(): Promise<ResultadoConfirmar> {
+    try {
+      return await confirmarAviso({ plazo: fireAt, proximo: calcularProximo() });
+    } catch {
+      // Sin conexión o la petición no llegó: no se sabe si se guardó. Reintentar es seguro, el servidor
+      // reconoce una confirmación ya guardada y no la repite.
+      return { ok: false, error: t.confirmar.error, reintentable: true };
+    }
+  }
+
+  function pararReintento() {
+    if (temporizador.current) clearTimeout(temporizador.current);
+    temporizador.current = null;
+  }
+
+  async function confirmar() {
+    if (enviando.current) return;
+    enviando.current = true;
+    pararReintento();
+    setEspera(null);
+    setErrorConfirmar(null);
+    setConfirmando(true);
+    const r = await confirmarEstoyBien();
+    enviando.current = false;
+    if (r.ok) {
+      intentos.current = 0;
+      router.replace("/home?confirmado=1");
+      router.refresh();
+      return;
+    }
+    setConfirmando(false);
+    setErrorConfirmar(r.error);
+    if (!r.reintentable) {
+      // Alerta en curso o aviso cambiado: Inicio se recarga y muestra el estado real.
+      if (r.error === t.confirmar.enAlerta || r.error === t.confirmar.cambio) router.refresh();
+      return;
+    }
+    programarReintento();
+  }
+  confirmarRef.current = confirmar;
+
+  function programarReintento() {
+    // Pasado el tiempo de gracia ya no se puede confirmar aquí: Inicio se recarga (el aviso pasa a alerta).
+    if (Date.now() > new Date(fireAt).getTime() + graciaMin * 60_000) {
+      router.refresh();
+      return;
+    }
+    if (!navigator.onLine) {
+      setEspera("red");
+      return;
+    }
+    const pausa = PAUSAS_MS[Math.min(intentos.current, PAUSAS_MS.length - 1)];
+    intentos.current += 1;
+    setEspera("pronto");
+    temporizador.current = setTimeout(() => confirmarRef.current(), pausa);
+  }
+
+  // Si se espera la conexión, al volver la red se reintenta en el acto.
+  useEffect(() => {
+    if (espera !== "red") return;
+    const alVolver = () => confirmarRef.current();
+    window.addEventListener("online", alVolver);
+    return () => window.removeEventListener("online", alVolver);
+  }, [espera]);
+
+  useEffect(() => pararReintento, []);
 
   function alternar() {
     if (!encendido) encender();
@@ -258,17 +323,27 @@ export default function ControlAviso({
               <p className="text-sm text-text-muted">{enGracia
                   ? rellenar(t.graciaTexto, { hasta: horaDe(new Date(new Date(fireAt).getTime() + graciaMin * 60_000)) })
                   : rellenar(t.noSePuedeTexto, { hasta: horaDe(new Date(fireAt)) })}</p>
-              {errorConfirmar && (
-                <p role="alert" className="text-sm font-medium text-danger">
-                  {errorConfirmar}
-                </p>
-              )}
-              <button type="button" onClick={confirmar} disabled={confirmando} aria-busy={confirmando} className={clases.principal}>
+              {/* Nunca "confirmado" sin servidor: si no llegó, se dice y se reintenta solo. */}
+              <p role="alert" className="text-sm font-medium text-danger empty:hidden">
+                {espera === "red" ? t.confirmar.sinRed : espera === "pronto" ? t.confirmar.reintentando : (errorConfirmar ?? "")}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  intentos.current = 0;
+                  confirmar();
+                }}
+                disabled={confirmando}
+                aria-busy={confirmando}
+                className={clases.principal}
+              >
                 {confirmando ? (
                   <span className="inline-flex items-center gap-2">
                     <Spinner />
                     {t.confirmando}
                   </span>
+                ) : espera ? (
+                  t.confirmar.reintentarAhora
                 ) : (
                   t.estoyBien
                 )}
