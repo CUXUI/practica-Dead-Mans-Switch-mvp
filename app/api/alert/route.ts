@@ -90,6 +90,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "Correo enviado, pero no se actualizó el estado" }, { status: 500 });
   }
 
+  // Fila de la alerta: la que cierra /api/alerta/cancelar y la que usa el historial (E7).
+  // Vence a las 48 h si nadie la cierra (S5, decidido).
+  const ahora = new Date();
+  const { error: alertaErr } = await admin.from("alerts").insert({
+    notice_id: notice.id,
+    issuer_id: notice.issuer_id,
+    started_at: ahora.toISOString(),
+    expires_at: new Date(ahora.getTime() + 48 * 60 * 60 * 1000).toISOString(),
+    outcome: "open",
+    last_stage: 1,
+  });
+  if (alertaErr) console.error("[alert] no se pudo crear la fila de alerts:", alertaErr.message);
+
   // Push al celular (canal principal). Si falla, el correo ya salió: no reintentamos por esto.
   const push = await sendPushToUser(admin, notice.issuer_id, {
     title: brand.name,
