@@ -1,5 +1,6 @@
 // Solo servidor. Motor de escalado de la alerta (S2, S5): avisa a los contactos de a uno,
 // registra cada envío y vence la alerta por tiempo.
+import { randomBytes, createHash } from "node:crypto";
 import { Client, Receiver } from "@upstash/qstash";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { sendEmail } from "@/lib/email";
@@ -65,10 +66,27 @@ export async function contactosDelAviso(admin: SupabaseClient, noticeId: string)
   });
 }
 
-// Avisa a un contacto por correo, registra el intento y marca el destinatario como avisado.
-// El correo va sin enlace hasta que exista la pantalla de la alerta (R2).
+// Token de la pantalla de la alerta: un valor aleatorio por envío. En la base solo se guarda su hash
+// SHA-256 en hexadecimal (alert_recipients.token_hash), igual que valida get_alert_view.
+export function crearToken(): { token: string; hash: string } {
+  const token = randomBytes(32).toString("base64url");
+  const hash = createHash("sha256").update(token).digest("hex");
+  return { token, hash };
+}
+
+// Avisa a un contacto por correo, con el enlace a la pantalla de la alerta (R2), registra el intento
+// y marca el destinatario como avisado. Cada envío genera un token nuevo: el enlace anterior deja de valer.
 export async function avisarAContacto(admin: SupabaseClient, alertId: string, contacto: Contacto, quien: string): Promise<boolean> {
   const marca = getBrand();
+  const { token, hash } = crearToken();
+  await admin
+    .from("alert_recipients")
+    .update({ token_hash: hash })
+    .eq("alert_id", alertId)
+    .eq("contact_id", contacto.id);
+
+  const base = appUrl();
+  const enlace = base ? `${base}/alerta/${encodeURIComponent(token)}` : null;
   let resultado: "sent" | "failed" = "sent";
   let idProveedor: string | null = null;
   try {
@@ -78,7 +96,8 @@ export async function avisarAContacto(admin: SupabaseClient, alertId: string, co
       html: `<p>Hola ${escapar(contacto.name)}.</p>
              <p>${escapar(quien)} te tiene como contacto de confianza en ${escapar(marca.name)}.
              Hoy no confirmó que está bien a la hora prevista.</p>
-             <p>Puede ser falta de batería o de señal. Si podés, comunicate con esa persona.</p>`,
+             <p>Puede ser falta de batería o de señal. Si podés, comunicate con esa persona.</p>
+             ${enlace ? `<p><a href="${enlace}">Ver la alerta</a></p>` : ""}`,
     });
     idProveedor = (envio as { id?: string } | null)?.id ?? null;
   } catch {
