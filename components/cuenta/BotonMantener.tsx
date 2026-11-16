@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 
-// Botón para mantener presionado (Biblioteca · 04 Navegación): botón con contorno de 48 px de alto que se
-// llena de oscuro, de izquierda a derecha, mientras la persona lo mantiene. Al completar 2 s ejecuta la acción.
+// Botón para mantener presionado (Biblioteca): en reposo se ve como Principal (oscuro, texto claro); al
+// mantenerlo se ve como secundario (fondo blanco, borde de 2 px) y se llena de oscuro, de izquierda a derecha.
+// Al completar 2 s ejecuta la acción.
 // Siempre lleva una línea de ayuda debajo. Con lector de pantalla o teclado no se puede "mantener": la
 // activación asistida (clic sin puntero, event.detail === 0) completa la acción directamente, porque el
 // diálogo que lo contiene ya es el paso de confirmación.
@@ -88,7 +89,9 @@ export default function BotonMantener({
         onPointerCancel={soltar}
         onContextMenu={(e) => e.preventDefault()}
         onClick={alHacerClic}
-        className="relative inline-flex min-h-12 w-full touch-none select-none items-center justify-center overflow-hidden rounded-[var(--spacing-radio-m)] border border-border bg-surface px-espacio-xl text-base font-bold leading-6 text-text disabled:cursor-not-allowed disabled:border-accion-desactivada disabled:text-[var(--text-color-sobre-desactivada)] focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-foco-anillo"
+        className={`relative inline-flex min-h-12 w-full touch-none select-none items-center justify-center overflow-hidden rounded-[var(--spacing-radio-m)] border-2 px-espacio-xl text-base font-bold leading-6 disabled:cursor-not-allowed disabled:border-accion-desactivada disabled:bg-accion-desactivada disabled:text-[var(--text-color-sobre-desactivada)] focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-foco-anillo ${
+          progreso > 0 ? "border-brand-primary bg-surface text-text" : "border-brand-primary bg-brand-primary text-brand-on-primary"
+        }`}
       >
         <span className="relative">{texto}</span>
         {/* Relleno que avanza; el mismo texto va encima en claro para que se lea sobre lo oscuro. */}

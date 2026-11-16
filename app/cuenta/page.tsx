@@ -26,7 +26,8 @@ export default async function Cuenta() {
   const enAlerta = aviso?.state === "alert";
 
   const dato = (valor: string | null | undefined) => (valor && valor.trim() ? valor : t.sinDato);
-  // Fila de perfil: etiqueta pequeña arriba y el dato debajo.
+  // Fila de perfil (DS): etiqueta pequeña arriba, dato debajo y línea inferior sutil. El enlace «Editar» de la
+  // fila queda fuera de este flujo (edición de perfil).
   const filas = [
     { etiqueta: t.nombre, valor: dato(perfil?.full_name) },
     { etiqueta: t.telefono, valor: dato(perfil?.phone) },
@@ -42,9 +43,9 @@ export default async function Cuenta() {
         <h2 id="datos" className="text-xl font-semibold leading-7">
           {t.datos}
         </h2>
-        <dl className="space-y-espacio-m">
+        <dl className="flex flex-col">
           {filas.map((f) => (
-            <div key={f.etiqueta}>
+            <div key={f.etiqueta} className="flex flex-col gap-espacio-xs border-b border-borde-sutil py-espacio-s">
               <dt className="text-sm leading-[21px] text-text-muted">{f.etiqueta}</dt>
               <dd className="break-all text-base leading-6">{f.valor}</dd>
             </div>
