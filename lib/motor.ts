@@ -2,6 +2,7 @@
 // registra cada envío y vence la alerta por tiempo.
 import { Client, Receiver } from "@upstash/qstash";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { createHash, randomBytes } from "node:crypto";
 import { sendEmail } from "@/lib/email";
 import { getBrand } from "@/lib/brand";
 
@@ -11,7 +12,7 @@ export const MINUTOS_ENTRE_CONTACTOS = 30;
 export const HORAS_VENCIMIENTO = 48;
 
 export function appUrl(): string | null {
-  return process.env.NEXT_PUBLIC_APP_URL ?? null;
+  return process.env.QSTASH_CALLBACK_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? null;
 }
 
 export function clienteQStash(): Client | null {
@@ -65,10 +66,10 @@ export async function contactosDelAviso(admin: SupabaseClient, noticeId: string)
   });
 }
 
-// Avisa a un contacto por correo, registra el intento y marca el destinatario como avisado.
-// El correo va sin enlace hasta que exista la pantalla de la alerta (R2).
+// Avisa a un contacto por correo, agrega la baja segura y registra el intento.
 export async function avisarAContacto(admin: SupabaseClient, alertId: string, contacto: Contacto, quien: string): Promise<boolean> {
   const marca = getBrand();
+  const enlaceBaja = await crearEnlaceBaja(admin, contacto.id);
   let resultado: "sent" | "failed" = "sent";
   let idProveedor: string | null = null;
   try {
@@ -78,7 +79,8 @@ export async function avisarAContacto(admin: SupabaseClient, alertId: string, co
       html: `<p>Hola ${escapar(contacto.name)}.</p>
              <p>${escapar(quien)} te tiene como contacto de confianza en ${escapar(marca.name)}.
              Hoy no confirmó que está bien a la hora prevista.</p>
-             <p>Puede ser falta de batería o de señal. Si podés, comunicate con esa persona.</p>`,
+             <p>Puede ser falta de batería o de señal. Si puedes, comunícate con esa persona.</p>
+             ${enlaceBaja ? `<hr><p><a href="${escapar(enlaceBaja)}">Dejar de ser contacto de ${escapar(quien)}</a></p>` : ""}`,
     });
     idProveedor = (envio as { id?: string } | null)?.id ?? null;
   } catch {
@@ -100,6 +102,25 @@ export async function avisarAContacto(admin: SupabaseClient, alertId: string, co
       .eq("contact_id", contacto.id);
   }
   return resultado === "sent";
+}
+
+// Crea un enlace opaco por correo. Solo se guarda su hash; la página pública no recibe IDs.
+async function crearEnlaceBaja(admin: SupabaseClient, contactId: string): Promise<string | null> {
+  const base = process.env.NEXT_PUBLIC_APP_URL;
+  if (!base) return null;
+  const token = randomBytes(32).toString("base64url");
+  const requestTokenHash = createHash("sha256").update(token).digest("hex");
+  const { error } = await admin.from("contact_removals").insert({
+    contact_id: contactId,
+    request_token_hash: requestTokenHash,
+    code_hash: null,
+    expires_at: new Date(Date.now() + 30 * 86_400_000).toISOString(),
+  });
+  if (error) {
+    console.error("[baja] no se pudo crear el enlace:", error.message);
+    return null;
+  }
+  return `${base.replace(/\/$/, "")}/baja/${encodeURIComponent(token)}`;
 }
 
 export function escapar(s: string) {

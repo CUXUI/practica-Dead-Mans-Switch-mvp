@@ -24,7 +24,7 @@ export async function cancelarProgramado(messageId: string | null) {
 // la gracia, no a la hora.
 export async function programar(noticeId: string, fire: Date): Promise<{ ok: true; messageId: string | null } | { ok: false }> {
   const token = process.env.QSTASH_TOKEN;
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+  const appUrl = process.env.QSTASH_CALLBACK_URL ?? process.env.NEXT_PUBLIC_APP_URL;
   if (!token || !appUrl) {
     if (process.env.NODE_ENV === "production") {
       console.error("[qstash] faltan QSTASH_TOKEN o NEXT_PUBLIC_APP_URL");

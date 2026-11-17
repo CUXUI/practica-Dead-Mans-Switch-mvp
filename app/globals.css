@@ -36,6 +36,22 @@ button:disabled,
   cursor: not-allowed;
 }
 
+/* Foco de teclado perceptible en todos los controles interactivos.
+   El doble anillo conserva contraste sobre fondos claros y sobre el botón de marca. */
+:root :where(
+  button:not(:disabled),
+  a[href],
+  input:not(:disabled),
+  select:not(:disabled),
+  textarea:not(:disabled),
+  summary,
+  [role="button"]:not([aria-disabled="true"])
+):focus-visible {
+  outline: 3px solid var(--color-accion-principal);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 2px var(--color-fondo-superficie);
+}
+
 body {
   background: var(--color-surface-muted);
   color: var(--color-text);
