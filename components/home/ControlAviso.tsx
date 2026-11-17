@@ -193,7 +193,7 @@ export default function ControlAviso({
 
   function programarReintento() {
     // Pasado el tiempo de gracia ya no se puede confirmar aquí: Inicio se recarga (el aviso pasa a alerta).
-    if (Date.now() > new Date(fireAt).getTime() + graciaMin * 60_000) {
+    if (Date.now() > finGracia) {
       router.refresh();
       return;
     }
@@ -207,13 +207,57 @@ export default function ControlAviso({
     temporizador.current = setTimeout(() => confirmarRef.current(), pausa);
   }
 
-  // Si se espera la conexión, al volver la red se reintenta en el acto.
+  // Fin del tiempo de gracia: a partir de ahí el motor avisa a los contactos y ya no se confirma aquí.
+  const finGracia = new Date(fireAt).getTime() + graciaMin * 60_000;
+  const esperaRef = useRef(espera);
+  esperaRef.current = espera;
+
+  // Si se espera la conexión, se reintenta al volver la red y, además, cada 60 s: en Android el evento
+  // "online" se pierde si la página está en segundo plano (probado en el celular).
   useEffect(() => {
     if (espera !== "red") return;
-    const alVolver = () => confirmarRef.current();
-    window.addEventListener("online", alVolver);
-    return () => window.removeEventListener("online", alVolver);
+    const reintentar = () => confirmarRef.current();
+    window.addEventListener("online", reintentar);
+    const id = setInterval(reintentar, 60_000);
+    return () => {
+      window.removeEventListener("online", reintentar);
+      clearInterval(id);
+    };
   }, [espera]);
+
+  // Al volver a la página (visible o con foco): si ya terminó el tiempo de gracia, Inicio se recarga para
+  // mostrar el estado real; si no, y hay un reintento pendiente, se reintenta en el acto. En segundo plano
+  // Android frena los temporizadores y puede perder el evento "online".
+  useEffect(() => {
+    if (!encendido) return;
+    const alVolver = () => {
+      if (document.visibilityState === "hidden") return;
+      if (Date.now() > finGracia) {
+        router.refresh();
+        return;
+      }
+      if (esperaRef.current) confirmarRef.current();
+    };
+    const alCambiarVisibilidad = () => {
+      if (document.visibilityState === "visible") alVolver();
+    };
+    window.addEventListener("focus", alVolver);
+    document.addEventListener("visibilitychange", alCambiarVisibilidad);
+    return () => {
+      window.removeEventListener("focus", alVolver);
+      document.removeEventListener("visibilitychange", alCambiarVisibilidad);
+    };
+  }, [encendido, finGracia, router]);
+
+  // Justo al terminar el tiempo de gracia, Inicio se recarga solo. Otra vez a los 30 s, por si el motor
+  // todavía no había pasado el aviso a alerta en la primera recarga.
+  useEffect(() => {
+    if (!encendido) return;
+    const falta = finGracia - Date.now();
+    if (falta < 0) return; // Ya pasó: lo cubre la recarga al volver a la página.
+    const ids = [setTimeout(() => router.refresh(), falta), setTimeout(() => router.refresh(), falta + 30_000)];
+    return () => ids.forEach(clearTimeout);
+  }, [encendido, finGracia, router]);
 
   useEffect(() => pararReintento, []);
 

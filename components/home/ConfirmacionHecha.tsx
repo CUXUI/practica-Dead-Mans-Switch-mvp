@@ -28,6 +28,9 @@ function aLas(fecha: Date, t: TextosInicio["confirmado"]): string {
   return rellenar(fecha.getHours() % 12 === 1 ? t.aLa : t.aLas, { hora });
 }
 
+// La hora termina en "a. m." / "p. m.": si la frase también cierra con punto, queda uno solo.
+const unPunto = (texto: string) => texto.replace(/\.\.$/, ".");
+
 export default function ConfirmacionHecha({
   t,
   confirmadoEn,
@@ -64,9 +67,9 @@ export default function ConfirmacionHecha({
           </svg>
           <div className="space-y-1">
             <p className="font-semibold">{tc.titulo}</p>
-            <p className="text-sm">{rellenar(tc.registrada, { cuando: `${dia(cuando, tc)} ${aLas(cuando, tc)}` })}</p>
+            <p className="text-sm">{unPunto(rellenar(tc.registrada, { cuando: `${dia(cuando, tc)} ${aLas(cuando, tc)}` }))}</p>
             <p className="text-sm">
-              {siguiente ? rellenar(tc.proximo, { cuando: `${dia(siguiente, tc)} ${aLas(siguiente, tc)}` }) : tc.soloHoy}
+              {siguiente ? unPunto(rellenar(tc.proximo, { cuando: `${dia(siguiente, tc)} ${aLas(siguiente, tc)}` })) : tc.soloHoy}
             </p>
           </div>
         </div>
