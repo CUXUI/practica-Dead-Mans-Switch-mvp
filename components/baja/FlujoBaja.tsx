@@ -31,9 +31,13 @@ export default function FlujoBaja({
   useEffect(() => {
     const params = new URLSearchParams(window.location.hash.replace(/^#/, ""));
     const code = params.get("codigo")?.replace(/\D/g, "").slice(0, 6);
+    const requestedStep = params.get("paso");
     if (estadoInicial === "ready" && code?.length === 6) {
       setDigits(code.split(""));
       setPaso("codigo");
+    } else if (estadoInicial === "ready" && requestedStep === "codigo") {
+      setPaso("codigo");
+      setTimeout(() => inputs.current[0]?.focus(), 0);
     }
   }, [estadoInicial]);
 
