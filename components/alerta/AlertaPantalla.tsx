@@ -102,6 +102,13 @@ export default function AlertaPantalla({
         </section>
       )}
 
+      {datos.mensaje && (
+        <section aria-labelledby="mensaje-titulo" className="space-y-2 rounded-xl border border-border bg-surface p-5">
+          <h2 id="mensaje-titulo" className="text-lg font-semibold">{t.mensajeTitulo(nombre)}</h2>
+          <p className="whitespace-pre-line break-words text-base">{datos.mensaje}</p>
+        </section>
+      )}
+
       <section aria-labelledby="pasos-titulo" className="space-y-3 rounded-xl border border-border bg-surface p-5">
         <h2 id="pasos-titulo" className="text-lg font-semibold">{t.pasosTitulo(nombre)}</h2>
         <p className="text-sm text-text-muted">{t.pasosSubtitulo(nombre)}</p>
