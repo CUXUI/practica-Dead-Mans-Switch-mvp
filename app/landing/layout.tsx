@@ -11,7 +11,8 @@ export const metadata: Metadata = {
 };
 
 // Solo en la landing, la acción principal es el negro del sistema (token accion-principal-pulsada) en vez del rojo,
-// que a las personas del test les transmitía error. Es un cambio local: no toca tailwind.css ni la app.
+// porque a diseño el rojo le transmite error y esta landing se va a testear con usuarios. Es un cambio local:
+// no toca tailwind.css ni la app.
 // brand-primary se redefine aparte porque ya viene resuelto desde :root.
 const ACCION_NEGRA = {
   "--color-accion-principal": "var(--color-accion-principal-pulsada)",
