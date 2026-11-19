@@ -39,7 +39,7 @@ export function MarcoBaja({
   useEffect(() => tituloRef.current?.focus(), [titulo]);
   return (
     <main className="mx-auto flex min-h-dvh max-w-xl flex-col bg-surface p-4">
-      <div className={`flex flex-1 flex-col gap-4 ${acciones ? "pb-28" : "pb-0"}`}>
+      <div className="flex flex-1 flex-col gap-4">
         <div className="flex items-center gap-2 text-xl font-semibold">
           <span aria-hidden="true" className="inline-flex size-8 items-center justify-center rounded-full bg-brand-primary text-brand-on-primary">
             {marca.slice(0, 1)}
@@ -62,7 +62,14 @@ export function MarcoBaja({
           </footer>
         )}
       </div>
-      {acciones && <div className="fixed inset-x-0 bottom-0 mx-auto max-w-xl space-y-2 border-t border-border/40 bg-surface p-4">{acciones}</div>}
+      {/* Botones: pegados abajo solo si la pantalla es alta. Con zoom al 200 % (o texto grande) la pantalla es baja y los
+          botones, que crecen, taparían el texto: entonces van al final del contenido y se llega a ellos con el scroll.
+          Al ir en el flujo (no fijos), el texto de encima nunca queda debajo de ellos. */}
+      {acciones && (
+        <div className="-mx-4 -mb-4 mt-4 space-y-2 border-t border-border/40 bg-surface p-4 [@media(min-height:36rem)]:sticky [@media(min-height:36rem)]:bottom-0">
+          {acciones}
+        </div>
+      )}
     </main>
   );
 }
