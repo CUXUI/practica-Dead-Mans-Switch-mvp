@@ -5,7 +5,7 @@ import { textosHome } from "@/components/home/textos";
 import { textosInicio } from "@/components/home/textosInicio";
 import InicioApagado from "@/components/home/InicioApagado";
 import InicioActivo from "@/components/home/InicioActivo";
-import CancelarAlerta from "@/components/home/CancelarAlerta";
+import InicioAlerta from "@/components/home/InicioAlerta";
 import type { Frecuencia } from "@/app/aviso/_datos/tipos";
 import { avisoActual } from "@/app/aviso/_datos/sesion";
 import { adaptadorExtras } from "@/app/aviso/_datos/adaptador";
@@ -114,23 +114,10 @@ export default async function HomePage({
     );
   }
 
-  // CONEXIÓN · Francis (Inicio con alerta en curso y cancelar, E6): esta pantalla no va en este PR.
-  // Hasta que llegue, se deja el bloque de alerta del placeholder del núcleo, tal cual.
-  // Lo que supuse: Inicio decide la pantalla por notices.state ("off", "active", "alert") y con "alert"
-  // le pasa el control a la pantalla de Francis. Tras cancelar, su flujo vuelve a /home?alerta=cancelada
-  // y Inicio apagado enseña el aviso "alerta cancelada" (canceladaAhora).
+  // Inicio con alerta en curso (E-10): el estado de ese momento y cancelar una falsa alarma (E6).
+  // Tras cancelar vuelve a /home?alerta=cancelada.
   if (aviso.state === "alert") {
-    return (
-      <main className="mx-auto max-w-md space-y-6 p-6">
-        <section aria-labelledby="alerta-en-curso" className="space-y-3 rounded-lg border-2 border-danger bg-surface p-4">
-          <h1 id="alerta-en-curso" className="text-lg font-semibold">
-            {textos.alertaTitulo}
-          </h1>
-          <p className="text-text-muted">{textos.alertaCuerpo}</p>
-          <CancelarAlerta textos={textos} />
-        </section>
-      </main>
-    );
+    return <InicioAlerta t={textosInicio(brand.variant)} textos={textos} app={brand.name} nombre={primerNombre(profile?.full_name ?? "")} />;
   }
 
   // Aviso encendido (E-02 Activo), con su ventana de confirmar y su tiempo de gracia.
