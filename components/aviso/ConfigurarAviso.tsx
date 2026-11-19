@@ -317,7 +317,7 @@ export default function ConfigurarAviso({
               ]}
             />
             {graciaOtro && (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-[repeat(auto-fit,minmax(5.5rem,1fr))] gap-3">
                 <div>
                   <label htmlFor="gracia-h" className="mb-1 block text-sm font-medium">
                     {t.hora.otroHoras}
