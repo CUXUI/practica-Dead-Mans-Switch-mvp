@@ -117,7 +117,17 @@ export default async function HomePage({
   // Inicio con alerta en curso (E-10): el estado de ese momento y cancelar una falsa alarma (E6).
   // Tras cancelar vuelve a /home?alerta=cancelada.
   if (aviso.state === "alert") {
-    return <InicioAlerta t={textosInicio(brand.variant)} textos={textos} app={brand.name} nombre={primerNombre(profile?.full_name ?? "")} />;
+    const extrasAlerta = await adaptadorExtras(supabase).leerAviso(user.id, aviso.id).catch(() => null);
+    const plazoAlerta = { fireAt: aviso.fire_at as string, frecuencia: aviso.recurrence as Frecuencia, dias: extrasAlerta?.dias ?? [] };
+    return (
+      <InicioAlerta
+        t={textosInicio(brand.variant)}
+        textos={textos}
+        app={brand.name}
+        nombre={primerNombre(profile?.full_name ?? "")}
+        plazo={plazoAlerta}
+      />
+    );
   }
 
   // Aviso encendido (E-02 Activo), con su ventana de confirmar y su tiempo de gracia.
@@ -128,6 +138,7 @@ export default async function HomePage({
       app={brand.name}
       nombre={primerNombre(profile?.full_name ?? "")}
       encendidoAhora={encendido === "1"}
+      canceladaAhora={alerta === "cancelada" ? textos.canceladaTitulo : undefined}
       confirmadoEn={confirmadoEn}
       graciaMin={(aviso.grace_minutes as number | null) ?? 0}
       plazo={{ fireAt: aviso.fire_at, frecuencia: aviso.recurrence as Frecuencia, dias: extrasAviso?.dias ?? [] }}
