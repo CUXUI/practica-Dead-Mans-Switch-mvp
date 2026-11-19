@@ -29,7 +29,6 @@ export default async function BajaPage({ params }: { params: Promise<{ token: st
       token={token}
       marca={brand.name}
       emisor={row?.issuer_name ?? ""}
-      correoOculto={row?.contact_email_masked ?? ""}
       estadoInicial={row?.removal_state ?? "inactive"}
       alertaInicial={row?.has_open_alert ?? false}
     />
