@@ -9,6 +9,11 @@ export default function LoginPage() {
       <h1 className="mb-1 text-2xl font-semibold">{brand.name}</h1>
       <p className="mb-6 text-text-muted">Inicia sesión para continuar.</p>
       <AuthForm mode="login" />
+      <p className="mt-4 text-sm">
+        <Link href="/recuperar" className="font-medium text-brand-primary underline">
+          ¿Olvidaste tu contraseña?
+        </Link>
+      </p>
       <p className="mt-6 text-sm">
         ¿No tienes cuenta?{" "}
         <Link href="/alta/registro" className="font-medium text-brand-primary underline">
