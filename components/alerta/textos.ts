@@ -19,6 +19,7 @@ const COMUNES = {
     `Otra persona de confianza ya abrió esta alerta sobre ${nombre}. Si podés, confirmá con esa persona qué está pasando.`,
   enviadaCuerpo: "Todavía nadie la abrió. Si podés, llamá o escribile ahora.",
   sinRespuesta: "Sin respuesta confirmada",
+  mensajeTitulo: (nombre: string) => `Mensaje de ${nombre}`,
   causasTitulo: "Puede que esté sin batería, sin señal o con el teléfono en silencio.",
   abiertaHace: (minutos: number) => `Abierta hace ${minutos} min`,
   ultimaSenal: (cuando: string) => oracion(`Su última confirmación fue ${cuando}`),

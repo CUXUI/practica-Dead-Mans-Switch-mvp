@@ -80,6 +80,25 @@ export function crearToken(): { token: string; hash: string } {
   return { token, hash };
 }
 
+// Mensaje opcional que quien emite dejó en su aviso («Mensaje para tus contactos»). Lo reciben solo con la
+// alerta. null si no escribió ninguno. Se lee con el cliente de administración: quien recibe no tiene sesión.
+export async function mensajeDelAviso(admin: SupabaseClient, alertId: string): Promise<string | null> {
+  const { data: alerta } = await admin.from("alerts").select("notice_id").eq("id", alertId).maybeSingle();
+  if (!alerta?.notice_id) return null;
+  const { data } = await admin.from("notice_extras").select("message").eq("notice_id", alerta.notice_id).maybeSingle();
+  const mensaje = (data?.message as string | null | undefined)?.trim();
+  return mensaje ? mensaje : null;
+}
+
+// Lo mismo, a partir del token del enlace de la alerta (para la pantalla pública /alerta/[token]).
+// Solo se usa el hash del token, igual que get_alert_view; sin token válido no devuelve nada.
+export async function mensajeDeLaAlertaPorToken(admin: SupabaseClient, token: string): Promise<string | null> {
+  const hash = createHash("sha256").update(token).digest("hex");
+  const { data: destino } = await admin.from("alert_recipients").select("alert_id").eq("token_hash", hash).limit(1).maybeSingle();
+  if (!destino?.alert_id) return null;
+  return mensajeDelAviso(admin, destino.alert_id as string);
+}
+
 // Avisa a un contacto por correo, con el enlace a la pantalla de la alerta (R2) y el de baja (R1),
 // registra el intento y marca el destinatario como avisado. Cada envío genera un token nuevo:
 // el enlace de la alerta anterior deja de valer.
@@ -95,6 +114,7 @@ export async function avisarAContacto(admin: SupabaseClient, alertId: string, co
   const base = appUrl();
   const enlace = base ? `${base}/alerta/${encodeURIComponent(token)}` : null;
   const enlaceBaja = await crearEnlaceBaja(admin, contacto.id);
+  const mensaje = await mensajeDelAviso(admin, alertId).catch(() => null);
   let resultado: "sent" | "failed" = "sent";
   let idProveedor: string | null = null;
   try {
@@ -105,6 +125,12 @@ export async function avisarAContacto(admin: SupabaseClient, alertId: string, co
              <p>${escapar(quien)} te tiene como contacto de confianza en ${escapar(marca.name)}.
              Hoy no confirmó que está bien a la hora prevista.</p>
              <p>Puede ser falta de batería o de señal. Si puedes, comunícate con esa persona.</p>
+             ${
+               mensaje
+                 ? `<p><strong>Mensaje de ${escapar(quien)}:</strong></p>
+             <blockquote style="margin:0 0 16px;padding:8px 12px;border-left:4px solid #999">${escapar(mensaje).replace(/\r?\n/g, "<br>")}</blockquote>`
+                 : ""
+             }
              ${enlace ? `<p><a href="${enlace}">Ver la alerta</a></p>` : ""}
              ${enlaceBaja ? `<hr><p><a href="${escapar(enlaceBaja)}">Dejar de ser contacto de ${escapar(quien)}</a></p>` : ""}`,
     });

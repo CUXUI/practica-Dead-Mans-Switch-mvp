@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
 import { getBrand } from "@/lib/brand";
+import { clienteAdmin } from "@/lib/supabase/admin";
+import { mensajeDeLaAlertaPorToken } from "@/lib/motor";
 import AlertaPantalla from "@/components/alerta/AlertaPantalla";
 import type { DatosAlerta } from "@/components/alerta/tipos";
 
@@ -54,6 +56,10 @@ export default async function AlertaPage({
     (e) => console.error("[alerta] no se pudo registrar la vista:", e)
   );
 
+  // Mensaje opcional de quien emite. Si no se puede leer, la alerta se muestra igual, sin mensaje.
+  const admin = clienteAdmin();
+  const mensaje = admin ? await mensajeDeLaAlertaPorToken(admin, tokenLimpio).catch(() => null) : null;
+
   const fila = data as FilaVista;
   const ahora = new Date();
   const datos: DatosAlerta = {
@@ -64,6 +70,7 @@ export default async function AlertaPage({
     horaDeberiaConfirmar: hora(new Date(fila.hora_deberia_confirmar)),
     ultimaConfirmacion: fila.ultima_confirmacion ? { cuando: cuandoConfirmo(fila.ultima_confirmacion, ahora) } : null,
     pasos: fila.pasos.map((p) => ({ orden: p.orden, texto: p.texto })),
+    mensaje,
   };
 
   const brand = getBrand();
