@@ -27,9 +27,6 @@ const COMUNES = {
   whatsapp: (nombre: string) => `Escribir a ${nombre} por WhatsApp`,
   mensajeWhatsapp: (nombre: string) =>
     `Hola ${nombre}, vi la alerta de Dead Man's Switch. ¿Estás bien?`,
-  pasosTitulo: (nombre: string) => `Qué hacer, según ${nombre}`,
-  pasosSubtitulo: (nombre: string) => `${nombre} dejó estos pasos para ti.`,
-  sinPasos: "No dejó pasos. Puedes llamar o escribir.",
   textoFijoTitulo: "Qué hacer en cualquier caso",
   cerradaTitulo: "La alerta se cerró",
   cerradaCuerpo: (nombre: string) =>
