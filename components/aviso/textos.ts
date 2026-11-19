@@ -23,6 +23,8 @@ const COMUNES = {
     selMomento: "a. m. o p. m.",
     otroMinutos: "Minutos",
     graciaAyuda: "Si no confirmas a la hora, esperamos este tiempo antes de avisar a tus contactos.",
+    // Aclara el rango de "Otro" para que ninguna opción parezca rota. Marcadores: {min}, {max}.
+    graciaRango: "El tiempo debe estar entre {min} y {max}.",
     // Pruebas del 12/11: 5 de 9 no entendieron para qué es el campo ni quién lo recibe.
     // La ayuda y el ejemplo van FUERA del campo (un placeholder desaparece al escribir y se lee peor).
     mensaje: "Mensaje para tus contactos",

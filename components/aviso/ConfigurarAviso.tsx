@@ -105,6 +105,13 @@ export default function ConfigurarAviso({
     setFocoTras(null);
   }, [focoTras]);
 
+  // Minutos que se pueden elegir para las horas ya elegidas: sin "0" si con 0 horas quedaría por debajo del
+  // mínimo (15 min), y sin 15, 30 ni 45 si ya se llegó al máximo (24 h). Así no hay opciones que no funcionan.
+  const minutosPosibles = [0, 15, 30, 45].filter((m) => {
+    const total = Math.floor(gracia / 60) * 60 + m;
+    return total >= limites.graciaMin && total <= limites.graciaMax;
+  });
+
   const porId = new Map(opciones.map((c) => [c.id, c]));
   const elegidos = enAviso.map((id) => porId.get(id)).filter((c): c is ContactoOpcion => !!c);
   const otros = opciones.filter((c) => !enAviso.includes(c.id));
@@ -320,7 +327,7 @@ export default function ConfigurarAviso({
                     value={gracia % 60}
                     onChange={(e) => setGracia(Math.floor(gracia / 60) * 60 + Number(e.target.value))}
                   >
-                    {[0, 15, 30, 45].map((m) => (
+                    {minutosPosibles.map((m) => (
                       <option key={m} value={m}>
                         {m}
                       </option>
@@ -328,6 +335,11 @@ export default function ConfigurarAviso({
                   </select>
                 </div>
               </div>
+            )}
+            {graciaOtro && (
+              <p className={clases.ayuda}>
+                {rellenar(t.hora.graciaRango, { min: duracion(limites.graciaMin), max: duracion(limites.graciaMax) })}
+              </p>
             )}
             {errores.gracia ? (
               <p className={clases.error}>{errores.gracia}</p>
