@@ -120,6 +120,8 @@ export default async function HomePage({
   // le pasa el control a la pantalla de Francis. Tras cancelar, su flujo vuelve a /home?alerta=cancelada
   // y Inicio apagado enseña el aviso "alerta cancelada" (canceladaAhora).
   if (aviso.state === "alert") {
+    const extrasAlerta = await adaptadorExtras(supabase).leerAviso(user.id, aviso.id).catch(() => null);
+    const plazoAlerta = { fireAt: aviso.fire_at as string, frecuencia: aviso.recurrence as Frecuencia, dias: extrasAlerta?.dias ?? [] };
     return (
       <main className="mx-auto max-w-md space-y-6 p-6">
         <section aria-labelledby="alerta-en-curso" className="space-y-3 rounded-lg border-2 border-danger bg-surface p-4">
@@ -127,7 +129,7 @@ export default async function HomePage({
             {textos.alertaTitulo}
           </h1>
           <p className="text-text-muted">{textos.alertaCuerpo}</p>
-          <CancelarAlerta textos={textos} />
+          <CancelarAlerta textos={textos} plazo={plazoAlerta} />
         </section>
       </main>
     );
@@ -141,6 +143,7 @@ export default async function HomePage({
       app={brand.name}
       nombre={primerNombre(profile?.full_name ?? "")}
       encendidoAhora={encendido === "1"}
+      canceladaAhora={alerta === "cancelada" ? textos.canceladaTitulo : undefined}
       confirmadoEn={confirmadoEn}
       graciaMin={(aviso.grace_minutes as number | null) ?? 0}
       plazo={{ fireAt: aviso.fire_at, frecuencia: aviso.recurrence as Frecuencia, dias: extrasAviso?.dias ?? [] }}

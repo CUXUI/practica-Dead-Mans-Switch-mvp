@@ -18,10 +18,13 @@ export default function InicioActivo({
   nombre,
   plazo,
   encendidoAhora,
+  canceladaAhora,
   confirmadoEn,
   graciaMin = 0,
 }: {
   graciaMin?: number;
+  // Tras cancelar una falsa alarma con una rutina que sigue: aviso breve («Cancelaste la alerta»).
+  canceladaAhora?: string;
   // Hora de la confirmación recién guardada en el servidor (solo justo después de "Estoy bien").
   confirmadoEn?: string;
   t: TextosInicio;
@@ -35,6 +38,7 @@ export default function InicioActivo({
       <main className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4">
         <SincronizarNotificaciones />
         {encendidoAhora && <Toast texto={t.encendido} quitarParametro="encendido" />}
+        {canceladaAhora && <Toast texto={canceladaAhora} quitarParametro="alerta" />}
         <Encabezado nombre={app} />
         <h1 className="text-2xl font-semibold">{nombre ? rellenar(t.hola, { nombre }) : t.holaSinNombre}</h1>
         {confirmadoEn && <ConfirmacionHecha t={t} confirmadoEn={confirmadoEn} proximo={plazo.fireAt} />}
