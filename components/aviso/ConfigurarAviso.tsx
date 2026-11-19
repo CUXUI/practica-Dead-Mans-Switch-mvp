@@ -114,6 +114,17 @@ export default function ConfigurarAviso({
     setPaso(p);
   }
 
+  // Al cambiar el dato que causó un error, ese error ya no aplica: se quita al momento.
+  // Se vuelve a comprobar al pulsar "Continuar".
+  function quitarError(...campos: string[]) {
+    setErrores((prev) => {
+      if (!campos.some((c) => c in prev)) return prev;
+      const siguiente = { ...prev };
+      for (const c of campos) delete siguiente[c];
+      return siguiente;
+    });
+  }
+
   function atras() {
     const i = ORDEN.indexOf(paso);
     if (i === 0) router.push(volverHref);
@@ -219,7 +230,10 @@ export default function ConfigurarAviso({
           <SelectorHora
             id="hora"
             valor={hora}
-            onChange={setHora}
+            onChange={(v) => {
+              setHora(v);
+              quitarError("hora");
+            }}
             invalido={!!errores.hora}
             descritoPor={errores.hora ? "hora-error" : "hora-ayuda"}
             t={{ hora: t.hora.selHora, minutos: t.hora.selMinutos, momento: t.hora.selMomento }}
@@ -241,7 +255,10 @@ export default function ConfigurarAviso({
             <Segmentado
               name="frecuencia"
               valor={frecuencia}
-              onChange={(v) => setFrecuencia(v as Frecuencia)}
+              onChange={(v) => {
+                setFrecuencia(v as Frecuencia);
+                quitarError("hora", "dias");
+              }}
               opciones={[
                 { valor: "once", label: t.hora.soloHoy },
                 { valor: "daily", label: t.hora.aDiario },
@@ -258,9 +275,10 @@ export default function ConfigurarAviso({
                         className="sr-only"
                         checked={dias.includes(d.valor)}
                         aria-label={d.nombre}
-                        onChange={(e) =>
-                          setDias((prev) => (e.target.checked ? [...prev, d.valor] : prev.filter((x) => x !== d.valor)))
-                        }
+                        onChange={(e) => {
+                          setDias((prev) => (e.target.checked ? [...prev, d.valor] : prev.filter((x) => x !== d.valor)));
+                          quitarError("hora", "dias");
+                        }}
                       />
                       <span aria-hidden="true">{d.corto}</span>
                     </label>
