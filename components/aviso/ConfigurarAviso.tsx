@@ -274,7 +274,7 @@ export default function ConfigurarAviso({
             />
             {frecuencia === "weekly" && (
               <div>
-                <div className="grid grid-cols-7 gap-1" role="group" aria-label={t.hora.elegirDias}>
+                <div className="flex flex-wrap gap-1" role="group" aria-label={t.hora.elegirDias}>
                   {DIAS.map((d) => (
                     <label key={d.valor} className={claseSegmento}>
                       <input
@@ -317,7 +317,7 @@ export default function ConfigurarAviso({
               ]}
             />
             {graciaOtro && (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-[repeat(auto-fit,minmax(5.5rem,1fr))] gap-3">
                 <div>
                   <label htmlFor="gracia-h" className="mb-1 block text-sm font-medium">
                     {t.hora.otroHoras}
@@ -576,8 +576,10 @@ export default function ConfigurarAviso({
 
 // ---------- Piezas ----------
 
+// Cada segmento se queda como mínimo del ancho de su texto (min-w-fit) y comparte el resto con los demás (flex-1).
+// Si no caben en una fila (zoom al 200 %), pasan a otra fila en vez de apretarse hasta pisarse o cortarse.
 const claseSegmento =
-  "flex min-h-12 cursor-pointer items-center justify-center rounded-lg border border-border bg-surface px-2 text-center font-medium has-[:checked]:bg-brand-primary has-[:checked]:text-brand-on-primary has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-brand-primary";
+  "flex min-h-12 min-w-fit flex-1 cursor-pointer items-center justify-center rounded-lg border border-border bg-surface px-2 py-2 text-center font-medium [overflow-wrap:anywhere] has-[:checked]:bg-brand-primary has-[:checked]:text-brand-on-primary has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-brand-primary";
 
 export function Segmentado({
   name,
@@ -591,7 +593,7 @@ export function Segmentado({
   opciones: { valor: string; label: string; aria?: string }[];
 }) {
   return (
-    <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${opciones.length}, minmax(0, 1fr))` }}>
+    <div className="flex flex-wrap gap-1">
       {opciones.map((o) => (
         <label key={o.valor} className={claseSegmento}>
           <input
