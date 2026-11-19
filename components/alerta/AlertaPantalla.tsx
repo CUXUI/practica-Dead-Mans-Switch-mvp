@@ -109,28 +109,6 @@ export default function AlertaPantalla({
         </section>
       )}
 
-      <section aria-labelledby="pasos-titulo" className="space-y-3 rounded-xl border border-border bg-surface p-5">
-        <h2 id="pasos-titulo" className="text-lg font-semibold">{t.pasosTitulo(nombre)}</h2>
-        <p className="text-sm text-text-muted">{t.pasosSubtitulo(nombre)}</p>
-        {datos.pasos.length === 0 ? (
-          <p className="text-sm">{t.sinPasos}</p>
-        ) : (
-          <ol className="space-y-3">
-            {datos.pasos.map((paso) => (
-              <li key={paso.orden} className="flex gap-3">
-                <span aria-hidden="true" className="flex size-8 shrink-0 items-center justify-center rounded-full bg-surface-muted font-semibold">
-                  {paso.orden}
-                </span>
-                <div>
-                  <p className="font-semibold">{paso.texto}</p>
-                  {paso.detalle && <p className="text-sm text-text-muted">{paso.detalle}</p>}
-                </div>
-              </li>
-            ))}
-          </ol>
-        )}
-      </section>
-
       {t.textoFijo && (
         <section aria-labelledby="fijo-titulo" className="space-y-2 rounded-xl border border-border bg-surface p-5">
           <h2 id="fijo-titulo" className="text-lg font-semibold">{t.textoFijoTitulo}</h2>
