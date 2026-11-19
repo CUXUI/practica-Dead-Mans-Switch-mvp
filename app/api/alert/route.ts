@@ -6,6 +6,7 @@ import { sendPushToUser } from "@/lib/push";
 import {
   MINUTOS_ENTRE_CONTACTOS,
   HORAS_VENCIMIENTO,
+  appUrl,
   avisarAContacto,
   contactosDelAviso,
   firmaValida,
@@ -112,15 +113,25 @@ export async function POST(req: NextRequest) {
   // 4. Avisar a quien emite (correo y push). Si falla, la alerta sigue: el correo es respaldo.
   const quien = (await admin.from("profiles").select("full_name").eq("id", notice.issuer_id).maybeSingle()).data
     ?.full_name?.trim() || "Tu aviso";
+  // Enlace directo a Inicio, donde está el botón de cancelar (mantener 2 s). No cancela nada por sí solo:
+  // cancelar sigue siendo una acción deliberada dentro de la app. Si no hay sesión, pide iniciarla y vuelve a Inicio.
+  const base = appUrl()?.replace(/\/$/, "");
+  const enlaceCancelar = base ? `${base}/home` : null;
   await sendEmail({
     to,
     subject: `${brand.name}: se disparó tu aviso`,
     html: `<p>Tu aviso se disparó porque no confirmaste que estás bien.</p>
-           <p>Estamos avisando a tus contactos de confianza. Si estás bien, entrá a la app y cancelá la alerta.</p>`,
+           <p>Estamos avisando a tus contactos de confianza. Si estás bien, entra a la app y cancela la alerta.</p>
+           ${
+             enlaceCancelar
+               ? `<p><a href="${enlaceCancelar}">Abrir la app y cancelar la alerta</a></p>
+           <p>En Inicio, mantén presionado el botón «Estoy bien, cancelar alerta» durante 2 segundos.</p>`
+               : ""
+           }`,
   }).catch((e) => console.error("[alert] correo a quien emite falló:", e));
   await sendPushToUser(admin, notice.issuer_id, {
     title: brand.name,
-    body: "Se disparó tu aviso. Entrá a la app para cancelar la alerta si estás bien.",
+    body: "Se disparó tu aviso. Entra a la app para cancelar la alerta si estás bien.",
     url: "/home",
   }).catch(() => ({ sent: 0 }));
 
