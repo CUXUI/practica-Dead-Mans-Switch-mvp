@@ -11,7 +11,6 @@ function oracion(s: string): string {
 }
 
 const COMUNES = {
-  etiquetaAbierta: "Alerta abierta",
   etiquetaEnviada: "Alerta enviada",
   etiquetaAlguienLaVio: "Alguien ya la vio",
   etiquetaSinRespuesta: "Sin respuesta confirmada",
