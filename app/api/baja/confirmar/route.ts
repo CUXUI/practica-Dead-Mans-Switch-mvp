@@ -9,19 +9,17 @@ import { getBrand } from "@/lib/brand";
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
-  const body = (await req.json().catch(() => null)) as { token?: string; code?: string; force?: boolean } | null;
+  const body = (await req.json().catch(() => null)) as { token?: string; force?: boolean } | null;
   const token = body?.token?.trim();
-  const code = body?.code?.replace(/\D/g, "");
-  if (!token || !code || code.length !== 6) {
-    return NextResponse.json({ kind: "invalid_code" }, { status: 400 });
+  if (!token) {
+    return NextResponse.json({ kind: "inactive" }, { status: 400 });
   }
 
   const anon = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
     auth: { persistSession: false },
   });
-  const { data, error } = await anon.rpc("confirm_contact_removal", {
+  const { data, error } = await anon.rpc("confirm_contact_removal_by_link", {
     p_token: token,
-    p_code: code,
     p_force: body?.force === true,
   });
   if (error) {
