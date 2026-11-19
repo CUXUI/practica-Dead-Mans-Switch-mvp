@@ -11,6 +11,19 @@ const COMUNES = {
   correo: "Correo",
   sinDato: "Sin completar",
   cerrarSesion: "Cerrar sesión",
+  // Notificaciones de este dispositivo. El interruptor solo afecta a este dispositivo.
+  notifTitulo: "Notificaciones",
+  notifEtiqueta: "Notificaciones en este dispositivo",
+  notifActivas: "Activas. Te avisamos aquí cuando sea hora de confirmar que estás bien y si hay una alerta.",
+  notifApagadas: "Apagadas. Te avisamos solo por correo, que puede tardar más o llegar a spam.",
+  notifSoloAqui: "Esto solo cambia este dispositivo.",
+  notifCambiando: "Cambiando…",
+  notifBloqueadas:
+    "Las notificaciones están bloqueadas en este navegador. Para activarlas, permítelas en los permisos del sitio y vuelve aquí.",
+  notifIosSinInstalar:
+    "En iPhone, primero agrega la app a tu pantalla de inicio. Las notificaciones solo funcionan desde la app instalada.",
+  notifNoDisponible: "Este dispositivo no permite notificaciones. Te avisamos por correo.",
+  notifError: "No pudimos cambiar las notificaciones. Revisa tu conexión e inténtalo de nuevo.",
   // Eliminar la cuenta (E8). Textos del Diálogo de confirmación · Destructiva de la Biblioteca.
   borrarTitulo: "Eliminar mi cuenta",
   borrarTexto: "Si eliminas tu cuenta, dejamos de avisar a tus contactos y se borran tus datos.",

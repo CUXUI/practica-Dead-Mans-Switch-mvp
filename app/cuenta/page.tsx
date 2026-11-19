@@ -5,6 +5,7 @@ import BarraNavegacion from "@/components/home/BarraNavegacion";
 import { textosInicio } from "@/components/home/textosInicio";
 import CerrarSesion from "@/components/cuenta/CerrarSesion";
 import DialogoEliminar from "@/components/cuenta/DialogoEliminar";
+import InterruptorNotificaciones from "@/components/cuenta/InterruptorNotificaciones";
 import { boton, tarjeta } from "@/components/cuenta/estilos";
 import { textosCuenta } from "@/components/cuenta/textos";
 import { avisoActual, exigirSesion } from "@/app/aviso/_datos/sesion";
@@ -52,6 +53,10 @@ export default async function Cuenta() {
           ))}
         </dl>
         <CerrarSesion texto={t.cerrarSesion} />
+      </section>
+
+      <section aria-labelledby="notificaciones" className={tarjeta}>
+        <InterruptorNotificaciones t={t} />
       </section>
 
       <section aria-labelledby="eliminar" className={tarjeta}>

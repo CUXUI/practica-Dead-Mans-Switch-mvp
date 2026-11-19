@@ -4,6 +4,8 @@ import { clienteAdmin } from "@/lib/supabase/admin";
 
 // POST /api/push/subscribe  { endpoint, keys: { p256dh, auth } }
 // Guarda el dispositivo de la persona para recibir notificaciones push.
+// DELETE /api/push/subscribe  { endpoint }
+// Borra ese dispositivo de la persona (Ajustes → Notificaciones apagadas).
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
@@ -37,6 +39,29 @@ export async function POST(req: NextRequest) {
     );
   if (error) {
     return NextResponse.json({ ok: false, error: "No se pudo guardar la suscripción" }, { status: 500 });
+  }
+  return NextResponse.json({ ok: true });
+}
+
+export async function DELETE(req: NextRequest) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ ok: false, error: "No autenticado" }, { status: 401 });
+  }
+
+  const body = (await req.json().catch(() => null)) as { endpoint?: string } | null;
+  const endpoint = body?.endpoint;
+  if (!endpoint) {
+    return NextResponse.json({ ok: false, error: "Falta el dispositivo" }, { status: 400 });
+  }
+
+  // Solo se borra el dispositivo de esta persona (la política de la tabla también lo exige).
+  const { error } = await supabase.from("push_subscriptions").delete().eq("issuer_id", user.id).eq("endpoint", endpoint);
+  if (error) {
+    return NextResponse.json({ ok: false, error: "No se pudo apagar" }, { status: 500 });
   }
   return NextResponse.json({ ok: true });
 }

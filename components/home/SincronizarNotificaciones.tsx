@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { suscribirYGuardar } from "@/lib/pwa/suscribir";
+import { notificacionesApagadasAqui } from "@/lib/pwa/optout";
 
 // Si la persona ya dio permiso pero este dispositivo no quedó registrado (falló la red, ahorro de batería,
 // se borró en el servidor...), Inicio lo intenta de nuevo solo: al abrir, al volver a la app y al cambiar de red.
@@ -19,6 +20,8 @@ export default function SincronizarNotificaciones() {
   useEffect(() => {
     if (!("Notification" in window) || !("serviceWorker" in navigator) || !("PushManager" in window)) return;
     if (Notification.permission !== "granted") return;
+    // Si la persona las apagó a propósito en Ajustes, no se vuelve a registrar el dispositivo solo.
+    if (notificacionesApagadasAqui()) return;
 
     let enCurso = false;
     const intentar = async () => {
