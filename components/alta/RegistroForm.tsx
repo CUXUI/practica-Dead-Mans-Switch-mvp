@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { TextosAlta } from "@/components/alta/textos";
 // Escucha desde ya el aviso de instalación de Android (se dispara una vez por página).
-import "@/components/alta/instalacion";
+import { detectarPlataforma } from "@/components/alta/instalacion";
 import { IconoAlerta, IconoCargando, IconoOjo, IconoOjoTachado, IconoReintentar } from "@/components/alta/iconos";
 
 // E0 · Registro de quien emite. Estados de los wireframes: vacío, con errores,
@@ -100,7 +100,7 @@ export default function RegistroForm({ textos }: { textos: TextosAlta["registro"
       email,
       password,
       options: {
-        data: { full_name: fullName, phone, username, is_adult: true },
+        data: { full_name: fullName, phone, username, is_adult: true, plataforma: detectarPlataforma() },
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
