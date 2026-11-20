@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 
 const inputClass =
   "w-full min-h-11 rounded-lg border border-border bg-surface px-3 py-2 text-text focus:outline-2 focus:outline-brand-primary";
 
-// Llega desde el enlace del correo, con la sesión de recuperación ya iniciada por el callback.
+// Llega desde el enlace del correo: /recuperar/nueva?token=… El servidor valida el token y cambia la contraseña.
 export default function NuevaContrasenaPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -22,12 +21,19 @@ export default function NuevaContrasenaPage() {
     if (password.length < 8) return setError("La contraseña tiene que tener al menos 8 caracteres.");
     if (password !== repetir) return setError("Las contraseñas no coinciden.");
 
+    const token = new URLSearchParams(window.location.search).get("token") ?? "";
     setLoading(true);
-    const supabase = createClient();
-    const { error: errorCambio } = await supabase.auth.updateUser({ password });
+    const res = await fetch("/api/recuperar/confirmar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token, password }),
+    }).catch(() => null);
+    const json = res ? ((await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null) : null;
     setLoading(false);
-    if (errorCambio) return setError("No pudimos cambiar la contraseña. Pide un enlace nuevo e inténtalo otra vez.");
-    router.replace("/home");
+    if (!res || !res.ok || !json?.ok) {
+      return setError(json?.error ?? "No pudimos cambiar la contraseña. Pide un enlace nuevo e inténtalo otra vez.");
+    }
+    router.replace("/login?cambio=ok");
     router.refresh();
   }
 

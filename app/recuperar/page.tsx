@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
 
 const inputClass =
   "w-full min-h-11 rounded-lg border border-border bg-surface px-3 py-2 text-text focus:outline-2 focus:outline-brand-primary";
@@ -19,13 +18,19 @@ export default function RecuperarPage() {
     setError(null);
     setLoading(true);
     const email = String(new FormData(e.currentTarget).get("email") ?? "").trim();
-    const supabase = createClient();
-    const { error: errorEnvio } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/callback?next=/recuperar/nueva`,
-    });
-    setLoading(false);
-    if (errorEnvio) return setError("No pudimos enviar el correo. Revisa tu conexión e inténtalo otra vez.");
-    setEnviado(true);
+    try {
+      const res = await fetch("/api/recuperar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) throw new Error("respuesta");
+      setEnviado(true);
+    } catch {
+      setError("No pudimos enviar el correo. Revisa tu conexión e inténtalo otra vez.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
