@@ -1,6 +1,7 @@
 import type { Variant } from "@/lib/brand";
 import { textosAlerta } from "./textos";
 import type { DatosAlerta } from "./tipos";
+import LineaConfirmacion from "./LineaConfirmacion";
 
 // Pantalla de la alerta para quien recibe (R2 a R7). Es una página pública sin cuenta:
 // se ve bien en celular y en computadora. Solo texto y enlaces; no ejecuta acciones solo.
@@ -53,12 +54,11 @@ export default function AlertaPantalla({
 
           <div className="space-y-1 text-sm">
             <p className="font-semibold">{t.abiertaHace(datos.minutosAbierta)}</p>
-            <p className="text-text-muted">
-              {t.debiaConfirmar(datos.horaDeberiaConfirmar)}
-              {datos.ultimaConfirmacion
-                ? ` ${t.ultimaSenal(datos.ultimaConfirmacion.cuando)}`
-                : ""}
-            </p>
+            <LineaConfirmacion
+              variant={variant}
+              horaIso={datos.horaDeberiaConfirmarIso}
+              ultimaIso={datos.ultimaConfirmacionIso}
+            />
           </div>
 
           {telefono && (

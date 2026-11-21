@@ -10,8 +10,9 @@ export type DatosAlerta = {
   nombreQuienEmite: string;
   telefonoQuienEmite: string | null; // solo dígitos internacionales, ej. "5491112345678"
   minutosAbierta: number;
-  horaDeberiaConfirmar: string; // "8:00 p. m."
-  ultimaConfirmacion: { cuando: string } | null; // "ayer a las 7:48 p. m."
+  // Instantes en UTC (ISO). Se formatean en el navegador de quien abre el enlace.
+  horaDeberiaConfirmarIso: string;
+  ultimaConfirmacionIso: string | null;
   pasos: PasoAlerta[];
   // Mensaje opcional que quien emite dejó para sus contactos. null si no escribió ninguno.
   mensaje: string | null;
