@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { destinoTrasIngreso } from "@/components/alta/push";
+import { IconoOjo, IconoOjoTachado } from "@/components/alta/iconos";
 
 type Props = { mode: "login" | "registro" };
 
@@ -15,6 +16,7 @@ export default function AuthForm({ mode }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [verContrasena, setVerContrasena] = useState(false);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -121,15 +123,26 @@ export default function AuthForm({ mode }: Props) {
       )}
       <div>
         <label htmlFor="password" className="mb-1 block text-sm font-medium">Contraseña</label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          required
-          minLength={8}
-          autoComplete={mode === "login" ? "current-password" : "new-password"}
-          className={inputClass}
-        />
+        <div className="relative">
+          <input
+            id="password"
+            name="password"
+            type={verContrasena ? "text" : "password"}
+            required
+            minLength={8}
+            autoComplete={mode === "login" ? "current-password" : "new-password"}
+            className={`${inputClass} pr-12`}
+          />
+          <button
+            type="button"
+            onClick={() => setVerContrasena((v) => !v)}
+            aria-label={verContrasena ? "Ocultar contraseña" : "Mostrar contraseña"}
+            aria-pressed={verContrasena}
+            className="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-text"
+          >
+            {verContrasena ? <IconoOjoTachado className="size-5" /> : <IconoOjo className="size-5" />}
+          </button>
+        </div>
       </div>
 
       {mode === "registro" && (
