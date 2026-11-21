@@ -8,7 +8,7 @@ import { rellenar } from "@/components/aviso/textos";
 import BarraNavegacion from "./BarraNavegacion";
 import SincronizarNotificaciones from "./SincronizarNotificaciones";
 import ConfirmacionHecha from "./ConfirmacionHecha";
-import ControlAviso from "./ControlAviso";
+import EncenderConHora from "./EncenderConHora";
 import type { TextosInicio } from "./textosInicio";
 
 function Nota({ children }: { children: React.ReactNode }) {
@@ -84,9 +84,8 @@ export default function InicioApagado({
           </div>
 
           {hayAceptado ? (
-            <ControlAviso
+            <EncenderConHora
               t={t}
-              encendido={false}
               fireAt={plazo.fireAt}
               frecuencia={plazo.frecuencia}
               dias={plazo.dias}
