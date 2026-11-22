@@ -25,14 +25,12 @@ export function MarcoBaja({
   titulo,
   etiqueta,
   acciones,
-  mostrarPie = false,
   children,
 }: {
   marca: string;
   titulo: string;
   etiqueta?: string;
   acciones?: ReactNode;
-  mostrarPie?: boolean;
   children: ReactNode;
 }) {
   const tituloRef = useRef<HTMLHeadingElement>(null);
@@ -51,16 +49,6 @@ export function MarcoBaja({
           {titulo}
         </h1>
         <div className="flex flex-1 flex-col gap-4">{children}</div>
-        {mostrarPie && (
-          <footer className="mt-auto flex gap-6 rounded-xl bg-surface-muted p-4">
-            <a href="/preguntas-frecuentes" className="min-h-12 content-center font-semibold underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary">
-              Preguntas frecuentes
-            </a>
-            <a href="/ayuda" className="min-h-12 content-center font-semibold underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary">
-              Ayuda
-            </a>
-          </footer>
-        )}
       </div>
       {/* Botones: pegados abajo solo si la pantalla es alta. Con zoom al 200 % (o texto grande) la pantalla es baja y los
           botones, que crecen, taparían el texto: entonces van al final del contenido y se llega a ellos con el scroll.

@@ -61,7 +61,7 @@ export default function FlujoBaja({
     );
   }
   if (paso === "listo") {
-    return <MarcoBaja marca={marca} titulo={t.listo.titulo(emisor)} mostrarPie><p>{t.listo.cuerpo}</p></MarcoBaja>;
+    return <MarcoBaja marca={marca} titulo={t.listo.titulo(emisor)}><p>{t.listo.cuerpo}</p></MarcoBaja>;
   }
   if (paso === "cancelado") {
     return (

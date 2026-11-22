@@ -59,13 +59,6 @@ function comunes(appName: string) {
       titulo: "Esta invitación ya no está activa",
       cuerpo: "Pídele a quien te invitó que te invite de nuevo.",
     },
-    // Pie de todas las pantallas web. TODO: crear las rutas /preguntas-frecuentes y /ayuda (no existen todavía).
-    pie: {
-      preguntas: "Preguntas frecuentes",
-      preguntasHref: "/preguntas-frecuentes",
-      ayuda: "Ayuda",
-      ayudaHref: "/ayuda",
-    },
     cargando: "Cargando tu invitación…",
     errorCarga: {
       titulo: "No pudimos abrir la invitación",

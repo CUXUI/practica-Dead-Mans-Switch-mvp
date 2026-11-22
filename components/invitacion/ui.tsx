@@ -84,13 +84,11 @@ export function Marco({
   marca,
   titulo,
   acciones,
-  pie,
   children,
 }: {
   marca: string;
   titulo: string;
   acciones?: ReactNode;
-  pie: TextosInvitacion["pie"];
   children: ReactNode;
 }) {
   const tituloRef = useRef<HTMLHeadingElement>(null);
@@ -103,17 +101,6 @@ export function Marco({
       </h1>
       <div className="flex flex-1 flex-col gap-4">{children}</div>
       {acciones && <div className="flex flex-col gap-3">{acciones}</div>}
-      <footer className="mt-2 flex flex-col gap-1 rounded-lg bg-surface p-4 text-sm">
-        <strong>{marca}</strong>
-        <nav aria-label="Ayuda" className="flex gap-4">
-          <a href={pie.preguntasHref} className="min-h-6 font-semibold underline">
-            {pie.preguntas}
-          </a>
-          <a href={pie.ayudaHref} className="min-h-6 font-semibold underline">
-            {pie.ayuda}
-          </a>
-        </nav>
-      </footer>
     </main>
   );
 }

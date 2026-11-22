@@ -21,7 +21,6 @@ export default function AceptarContacto({
   api?: ContactsApi;
 }) {
   const textos = textosInvitacion(variant, marca);
-  const pie = textos.pie;
   const [duda, setDuda] = useState<number | null>(null); // una duda abierta a la vez
   const { state, respond, retry } = useInvitationFlow(token, api);
 
@@ -40,7 +39,6 @@ export default function AceptarContacto({
     case "loadError":
       return (
         <Marco
-          pie={pie}
           marca={marca}
           titulo={textos.errorCarga.titulo}
           acciones={<Boton onClick={retry}>{textos.errorCarga.reintentar}</Boton>}
@@ -51,7 +49,7 @@ export default function AceptarContacto({
 
     case "inactive":
       return (
-        <Marco pie={pie} marca={marca} titulo={textos.inactiva.titulo}>
+        <Marco marca={marca} titulo={textos.inactiva.titulo}>
           <Caja>
             <p>{textos.inactiva.cuerpo}</p>
           </Caja>
@@ -60,7 +58,7 @@ export default function AceptarContacto({
 
     case "already":
       return (
-        <Marco pie={pie} marca={marca} titulo={textos.yaEsContacto.titulo(state.invitation.issuerName)}>
+        <Marco marca={marca} titulo={textos.yaEsContacto.titulo(state.invitation.issuerName)}>
           <p className="text-text-muted">{textos.yaEsContacto.cuerpo}</p>
         </Marco>
       );
@@ -68,7 +66,7 @@ export default function AceptarContacto({
     case "accepted": {
       const emisor = state.invitation.issuerName;
       return (
-        <Marco pie={pie} marca={marca} titulo={textos.acepto.titulo(emisor)}>
+        <Marco marca={marca} titulo={textos.acepto.titulo(emisor)}>
           {textos.acepto.cuerpo(emisor).map((linea) => (
             <p key={linea} className="text-text-muted">
               {linea}
@@ -83,7 +81,7 @@ export default function AceptarContacto({
     case "rejected": {
       const emisor = state.invitation.issuerName;
       return (
-        <Marco pie={pie} marca={marca} titulo={textos.rechazo.titulo(emisor)}>
+        <Marco marca={marca} titulo={textos.rechazo.titulo(emisor)}>
           <p className="text-text-muted">{textos.rechazo.cuerpo(emisor)}</p>
         </Marco>
       );
@@ -95,7 +93,6 @@ export default function AceptarContacto({
       const t = textos.invitacion;
       return (
         <Marco
-          pie={pie}
           marca={marca}
           titulo={t.titulo(emisor)}
           acciones={
