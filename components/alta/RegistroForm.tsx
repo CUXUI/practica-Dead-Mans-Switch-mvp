@@ -15,11 +15,11 @@ import { IconoAlerta, IconoCargando, IconoOjo, IconoOjoTachado, IconoReintentar 
 // Adónde va la persona al crear la cuenta: la guía para agregar la app a inicio.
 const DESTINO_TRAS_REGISTRO = "/alta/instalar";
 
-type Campo = "full_name" | "email" | "phone" | "username" | "password" | "is_adult" | "ack_emergency";
+type Campo = "full_name" | "email" | "phone" | "password" | "is_adult" | "ack_emergency";
 type Errores = Partial<Record<Campo, string>>;
 type Aviso = "correo-registrado" | "sin-conexion" | "error-general" | null;
 
-const ORDEN: Campo[] = ["full_name", "email", "phone", "username", "password", "is_adult", "ack_emergency"];
+const ORDEN: Campo[] = ["full_name", "email", "phone", "password", "is_adult", "ack_emergency"];
 
 const inputBase =
   "w-full min-h-12 rounded-lg border bg-surface px-3 py-2 text-text placeholder:text-text-muted focus:outline-2 focus:outline-offset-1 focus:outline-brand-primary disabled:bg-surface-muted";
@@ -43,12 +43,10 @@ export default function RegistroForm({ textos }: { textos: TextosAlta["registro"
     const nombre = String(form.get("full_name") ?? "").trim();
     const correo = String(form.get("email") ?? "").trim();
     const celular = String(form.get("phone") ?? "").replace(/[\s()-]/g, "");
-    const usuario = String(form.get("username") ?? "").trim().toLowerCase();
     const contrasena = String(form.get("password") ?? "");
     if (nombre.length < 2) e.full_name = textos.revisaCampo;
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) e.email = textos.revisaCampo;
     if (!/^\+?\d{7,15}$/.test(celular)) e.phone = textos.revisaCampo;
-    if (!/^[a-z0-9._]{3,20}$/.test(usuario)) e.username = textos.revisaCampo;
     if (contrasena.length < 8) e.password = textos.revisaCampo;
     if (form.get("is_adult") !== "on") e.is_adult = textos.revisaOpcion;
     if (form.get("ack_emergency") !== "on") e.ack_emergency = textos.revisaOpcion;
@@ -76,31 +74,15 @@ export default function RegistroForm({ textos }: { textos: TextosAlta["registro"
     const password = String(form.get("password"));
     const fullName = String(form.get("full_name")).trim();
     const phone = String(form.get("phone")).trim();
-    const username = String(form.get("username")).trim().toLowerCase();
 
     setCargando(true);
     const supabase = createClient();
-
-    // El usuario tiene que ser único: si ya resuelve a un correo, está en uso.
-    const { data: enUso, error: errorUsuario } = await supabase.rpc("resolve_login_email", {
-      identifier: username,
-    });
-    if (errorUsuario) {
-      setCargando(false);
-      return setAviso(esErrorDeRed(errorUsuario.message) ? "sin-conexion" : "error-general");
-    }
-    if (enUso) {
-      setCargando(false);
-      const conError = { username: textos.usuarioEnUso };
-      setErrores(conError);
-      return enfocarPrimerError(conError);
-    }
 
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { full_name: fullName, phone, username, is_adult: true, plataforma: detectarPlataforma() },
+        data: { full_name: fullName, phone, is_adult: true, plataforma: detectarPlataforma() },
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
@@ -140,7 +122,7 @@ export default function RegistroForm({ textos }: { textos: TextosAlta["registro"
   }
 
   function campoTexto(
-    campo: "full_name" | "email" | "phone" | "username",
+    campo: "full_name" | "email" | "phone",
     etiqueta: string,
     ejemplo: string,
     extra: React.InputHTMLAttributes<HTMLInputElement>,
@@ -241,13 +223,6 @@ export default function RegistroForm({ textos }: { textos: TextosAlta["registro"
         autoComplete: "tel",
         inputMode: "tel",
       })}
-      {campoTexto(
-        "username",
-        textos.usuario,
-        textos.usuarioEjemplo,
-        { autoComplete: "username", autoCapitalize: "none", maxLength: 20 },
-        textos.usuarioAyuda,
-      )}
 
       <div>
         <label htmlFor="password" className="mb-1 block text-sm font-semibold">
