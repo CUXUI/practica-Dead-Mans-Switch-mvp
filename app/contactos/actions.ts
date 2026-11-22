@@ -168,12 +168,35 @@ export async function reenviarInvitacion(_prev: EstadoReenviar, form: FormData):
 
 export type EstadoQuitar = { error?: string };
 
+// Avisa por correo a quien ya no es contacto. Si el correo falla, la baja igual queda hecha.
+async function avisarQuitado(s: Sesion, contacto: { name: string; email: string }) {
+  const brand = getBrand();
+  const t = textosContactos(brand.variant).correo.quitado;
+  const { data: perfil } = await s.supabase.from("profiles").select("full_name").eq("id", s.user.id).single();
+  const quien = escaparHtml(perfil?.full_name?.trim() || "Una persona");
+  try {
+    await sendEmail({
+      to: contacto.email,
+      subject: t.asunto(perfil?.full_name?.trim() || "Una persona"),
+      html: t.cuerpo(escaparHtml(contacto.name), quien, escaparHtml(brand.name)),
+    });
+  } catch (e) {
+    console.error("[contactos] aviso de baja no enviado:", e instanceof Error ? e.message : e);
+  }
+}
+
 // E5 · Quitar un contacto. Libera su sitio (máximo 5) y lo saca del aviso.
 export async function quitarContacto(_prev: EstadoQuitar, form: FormData): Promise<EstadoQuitar> {
   const s = await exigirSesion();
   const t = textosContactos(getBrand().variant).lista;
   const id = String(form.get("contact_id") ?? "");
-  const { data: c } = await s.supabase.from("contacts").select("id").eq("id", id).eq("issuer_id", s.user.id).neq("status", "removed").maybeSingle();
+  const { data: c } = await s.supabase
+    .from("contacts")
+    .select("id, name, email, status")
+    .eq("id", id)
+    .eq("issuer_id", s.user.id)
+    .neq("status", "removed")
+    .maybeSingle();
   if (!c) return { error: t.falloQuitar };
   const { error } = await s.supabase
     .from("contacts")
@@ -181,6 +204,8 @@ export async function quitarContacto(_prev: EstadoQuitar, form: FormData): Promi
     .eq("id", id);
   if (error) return { error: t.falloQuitar };
   await sacarDeAvisos(s.supabase, s.user.id, id);
+  // Solo a quien ya era contacto (aceptó): a quien tenía una invitación pendiente no hace falta avisarle.
+  if (c.status === "accepted") await avisarQuitado(s, { name: c.name, email: c.email });
   revalidatePath("/contactos");
   revalidatePath("/home");
   redirect("/contactos?quitado=1");

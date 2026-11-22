@@ -119,7 +119,7 @@ const COMUNES = {
     quitar: "Quitar",
     quitarPregunta: "¿Quitar a {nombre} de tus contactos?",
     // Una frase por estado: lo que se pierde al quitar no es lo mismo en cada caso.
-    quitarAceptado: "Ya no le avisaremos si no confirmas a tiempo.",
+    quitarAceptado: "Ya no le avisaremos si no confirmas a tiempo. Le enviaremos un correo para avisarle que dejó de ser tu contacto.",
     quitarPendiente: "La invitación que le enviaste dejará de valer.",
     quitarSinEnviar: "Su invitación no llegó a enviarse.",
     quitarRechazado: "Saldrá de tu lista y dejará su sitio libre.",
@@ -140,6 +140,14 @@ const COMUNES = {
       `<p>${quien} te invita a ser su contacto de confianza en ${app}. Si un día no confirma a tiempo que está bien, te avisaremos para que puedas comunicarte con esa persona.</p>` +
       `<p>No tienes que instalar nada ni crear una cuenta.</p>` +
       `<p><a href="${enlace}">Ver la invitación</a></p>`,
+    // Aviso a un contacto que ya había aceptado y que quien emite quitó de su lista.
+    quitado: {
+      asunto: (quien: string) => `${quien} ya no te tiene como contacto de confianza`,
+      cuerpo: (contacto: string, quien: string, app: string) =>
+        `<p>Hola, ${contacto}:</p>` +
+        `<p>${quien} te quitó de sus contactos de confianza en ${app}.</p>` +
+        `<p>Ya no te avisaremos si esa persona no confirma a tiempo que está bien. No tienes que hacer nada.</p>`,
+    },
   },
 };
 
