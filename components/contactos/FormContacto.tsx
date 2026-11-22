@@ -29,6 +29,9 @@ export default function FormContacto({
   // se vuelven a montar con el valor elegido.
   const [vuelta, setVuelta] = useState(0);
   useEffect(() => setVuelta((n) => n + 1), [estado]);
+  // Contador del mensaje: arranca con lo que volvió del servidor y se actualiza al escribir.
+  const [largoMensaje, setLargoMensaje] = useState((estado.valores?.mensaje ?? "").length);
+  useEffect(() => setLargoMensaje((estado.valores?.mensaje ?? "").length), [estado]);
   const errNombre = estado.campo === "name" ? estado.error : undefined;
   const errCorreo = estado.campo === "email" ? estado.error : undefined;
   const errMensaje = estado.campo === "mensaje" ? estado.error : undefined;
@@ -167,8 +170,9 @@ export default function FormContacto({
                     rows={3}
                     maxLength={mensajeMax}
                     defaultValue={estado.valores?.mensaje}
+                    onChange={(e) => setLargoMensaje(e.target.value.length)}
                     aria-invalid={!!errMensaje}
-                    aria-describedby={errMensaje ? "mensaje-error" : "mensaje-ayuda"}
+                    aria-describedby={errMensaje ? "mensaje-error" : "mensaje-ayuda mensaje-contador"}
                     className={`${clases.campo} resize-none`}
                   />
                   {errMensaje ? (
@@ -180,6 +184,14 @@ export default function FormContacto({
                       {t.tuMensajeAyuda}
                     </p>
                   )}
+                  <p id="mensaje-contador" className="mt-1 text-right text-sm text-text-muted">
+                    <span aria-hidden="true">
+                      {largoMensaje} / {mensajeMax}
+                    </span>
+                    <span className="sr-only">
+                      {largoMensaje} de {mensajeMax} caracteres
+                    </span>
+                  </p>
                 </div>
               )}
             </fieldset>
