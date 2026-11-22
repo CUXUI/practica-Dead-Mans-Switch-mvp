@@ -1,8 +1,11 @@
+import Image from "next/image";
 import Link from "next/link";
 import BotonInstalar from "@/components/landing/BotonInstalar";
 import InstalarApp from "@/components/landing/InstalarApp";
 import { configLanding, RUTA_BAJA_CONTACTO, RUTA_LANDING } from "@/components/landing/config";
 import { textosLanding } from "@/components/landing/textos";
+import VideoHero from "@/components/landing/VideoHero";
+import { IconoCampana, IconoReloj, IconoToque } from "@/components/landing/iconos";
 import { estiloBotonSecundario, estiloEnlaceTexto, Seccion } from "@/components/landing/ui";
 
 // Secciones del home de la landing, en el orden del brief. Un mensaje por sección y pocas palabras.
@@ -12,17 +15,20 @@ export function Hero() {
   const t = textosLanding.hero;
   return (
     <section aria-labelledby="hero-titulo" className="bg-surface">
-      <div className="mx-auto max-w-5xl px-4 py-12 md:py-20">
-        <h1 id="hero-titulo" className="max-w-2xl text-[32px] font-bold leading-10 md:text-5xl md:leading-tight">
-          {t.titulo}
-        </h1>
-        <p className="mt-4 max-w-xl text-lg text-text-muted">{t.subtitulo}</p>
-        <div className="mt-8 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-6">
-          <BotonInstalar texto={t.instalar} destino="#instalar" className="w-full sm:w-auto" />
-          <a href="#contacto" className={estiloEnlaceTexto}>
-            {t.meInvitaron}
-          </a>
+      <div className="mx-auto grid max-w-5xl items-center gap-8 px-4 py-12 md:grid-cols-2 md:gap-12 md:py-20">
+        <div>
+          <h1 id="hero-titulo" className="text-[32px] font-bold leading-10 md:text-5xl md:leading-tight">
+            {t.titulo}
+          </h1>
+          <p className="mt-4 max-w-xl text-lg text-text-muted">{t.subtitulo}</p>
+          <div className="mt-8 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-6">
+            <BotonInstalar texto={t.instalar} destino="#instalar" className="w-full sm:w-auto" />
+            <a href="#contacto" className={estiloEnlaceTexto}>
+              {t.meInvitaron}
+            </a>
+          </div>
         </div>
+        <VideoHero />
       </div>
     </section>
   );
@@ -42,25 +48,50 @@ function resaltar(texto: string, destacado?: string) {
   );
 }
 
+// Un icono por paso, en el mismo orden que los pasos de textos.ts: hora, toque, aviso.
+const ICONOS_PASOS = [IconoReloj, IconoToque, IconoCampana];
+
 export function ComoFunciona() {
   const t = textosLanding.comoFunciona;
   return (
     <Seccion id="como-funciona" titulo={t.titulo}>
-      {/* Cards de pasos. Las capturas de la app se suman cuando el equipo defina cuáles van. */}
-      <ol className="grid gap-4 md:grid-cols-3">
-        {t.pasos.map((paso, i) => (
-          <li key={paso.titulo} className="flex flex-col gap-3 rounded-2xl border border-borde-sutil bg-surface p-6">
-            <span
-              aria-hidden="true"
-              className="flex size-10 items-center justify-center rounded-full bg-fondo-inverso text-lg font-bold text-brand-on-primary"
-            >
-              {i + 1}
-            </span>
-            <h3 className="text-xl font-semibold leading-7">{paso.titulo}</h3>
-            <p className="text-text-muted">{resaltar(paso.detalle, "destacado" in paso ? paso.destacado : undefined)}</p>
-          </li>
-        ))}
-      </ol>
+      {/* Escritorio: imagen a la izquierda y tarjetas a la derecha. Celular: tarjetas arriba e imagen abajo.
+          Iconos provisionales; la imagen es decorativa (el texto de las tarjetas ya dice todo). */}
+      <div className="grid gap-6 md:grid-cols-2 md:gap-8">
+        <div className="relative order-2 min-h-72 overflow-hidden rounded-2xl bg-fondo-sutil md:order-1 md:min-h-full">
+          <Image
+            src="/landing/img/como-funciona.jpg"
+            alt=""
+            fill
+            sizes="(min-width: 768px) 50vw, 100vw"
+            className="object-cover"
+          />
+        </div>
+        <ol className="order-1 flex flex-col gap-4 md:order-2">
+          {t.pasos.map((paso, i) => {
+            const Icono = ICONOS_PASOS[i];
+            return (
+              <li
+                key={paso.titulo}
+                className="flex items-start gap-4 rounded-2xl border border-borde-sutil bg-surface p-5"
+              >
+                <span
+                  aria-hidden="true"
+                  className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-fondo-sutil text-text"
+                >
+                  <Icono className="size-7" />
+                </span>
+                <div>
+                  <h3 className="text-xl font-semibold leading-7">{paso.titulo}</h3>
+                  <p className="mt-1 text-text-muted">
+                    {resaltar(paso.detalle, "destacado" in paso ? paso.destacado : undefined)}
+                  </p>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
     </Seccion>
   );
 }
@@ -135,11 +166,12 @@ export function NoHace() {
   const t = textosLanding.noHace;
   return (
     <Seccion id="no-hace" titulo={t.titulo}>
-      <ul className="grid gap-4 md:grid-cols-3">
+      {/* Lista alargada y discreta: una fila por punto, separadas por una línea. */}
+      <ul className="divide-y divide-borde-sutil border-y border-borde-sutil">
         {t.puntos.map((p) => (
-          <li key={p.titulo} className="flex flex-col items-center gap-2 rounded-2xl border border-borde-sutil bg-surface p-6 text-center">
-            <h3 className="text-lg font-semibold leading-7">{p.titulo}</h3>
-            <p className="text-text-muted">{p.descripcion}</p>
+          <li key={p.titulo} className="flex flex-col gap-1 py-4 md:flex-row md:items-baseline md:gap-8">
+            <h3 className="text-lg font-semibold leading-7 md:w-1/3">{p.titulo}</h3>
+            <p className="text-text-muted md:w-2/3">{p.descripcion}</p>
           </li>
         ))}
       </ul>
