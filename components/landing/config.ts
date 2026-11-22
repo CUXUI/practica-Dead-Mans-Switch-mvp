@@ -11,7 +11,7 @@ export type ConfigLanding = {
 };
 
 export const configLanding: ConfigLanding = {
-  nombre: "Nombre de la App",
+  nombre: "Cheki",
   eslogan: "Tu tranquilidad y la de los tuyos, en un toque.",
   descripcion: "Un toque para decir que estás bien. Si no lo das, tus contactos lo sabrán.",
   mostrarOrganizaciones: true,

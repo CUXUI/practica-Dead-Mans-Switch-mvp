@@ -19,6 +19,7 @@ export const textosLanding = {
     subtitulo: "Un toque para decir que estás bien.",
     instalar: "Instalar",
     meInvitaron: "Me invitaron a ser contacto",
+    video: { pausar: "Pausar video", reproducir: "Reproducir video" },
   },
   comoFunciona: {
     titulo: "Cómo funciona",
