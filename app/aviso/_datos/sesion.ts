@@ -18,7 +18,7 @@ export type Sesion = Awaited<ReturnType<typeof exigirSesion>>;
 export async function avisoActual(s: Sesion) {
   const { data } = await s.supabase
     .from("notices")
-    .select("id, state, kind, recurrence, fire_at, grace_minutes, escalation_minutes")
+    .select("id, state, kind, recurrence, fire_at, grace_minutes, escalation_minutes, activated_at")
     .eq("issuer_id", s.user.id)
     .order("created_at", { ascending: false });
   const avisos = data ?? [];

@@ -45,7 +45,7 @@ export async function encenderAviso(fireAt: string): Promise<ResultadoEstado> {
 
   const { error } = await s.supabase
     .from("notices")
-    .update({ state: "active", fire_at: fire.toISOString(), updated_at: new Date().toISOString() })
+    .update({ state: "active", fire_at: fire.toISOString(), activated_at: new Date().toISOString(), updated_at: new Date().toISOString() })
     .eq("id", aviso.id)
     .eq("state", "off");
   if (error) return falla();

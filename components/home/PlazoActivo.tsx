@@ -27,18 +27,21 @@ export default function PlazoActivo({
   fireAt,
   frecuencia,
   dias,
+  activadoEn,
 }: {
   t: TextosInicio;
   fireAt: string;
   frecuencia: Frecuencia;
   dias: number[];
+  // Hora en que se encendió el aviso. Sin dato (avisos encendidos antes), se usa el inicio de la ventana.
+  activadoEn?: string | null;
 }) {
   const [listo, setListo] = useState(false);
   useEffect(() => setListo(true), []);
   if (!listo) return <div aria-hidden="true" className="min-h-24" />;
 
   const plazo = new Date(fireAt);
-  const desde = new Date(plazo.getTime() - CONFIG_EMISOR.ventanaConfirmarMin * 60_000);
+  const desde = activadoEn ? new Date(activadoEn) : new Date(plazo.getTime() - CONFIG_EMISOR.ventanaConfirmarMin * 60_000);
   const cuando =
     frecuencia === "daily"
       ? t.frecuenciaDiaria

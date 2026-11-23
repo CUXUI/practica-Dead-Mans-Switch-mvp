@@ -141,7 +141,7 @@ export default async function HomePage({
       canceladaAhora={alerta === "cancelada" ? textos.canceladaTitulo : undefined}
       confirmadoEn={confirmadoEn}
       graciaMin={(aviso.grace_minutes as number | null) ?? 0}
-      plazo={{ fireAt: aviso.fire_at, frecuencia: aviso.recurrence as Frecuencia, dias: extrasAviso?.dias ?? [] }}
+      plazo={{ fireAt: aviso.fire_at, frecuencia: aviso.recurrence as Frecuencia, dias: extrasAviso?.dias ?? [], activadoEn: (aviso.activated_at as string | null) ?? null }}
     />
   );
 }

@@ -30,7 +30,7 @@ export default function InicioActivo({
   t: TextosInicio;
   app: string;
   nombre: string;
-  plazo: { fireAt: string; frecuencia: Frecuencia; dias: number[] };
+  plazo: { fireAt: string; frecuencia: Frecuencia; dias: number[]; activadoEn?: string | null };
   encendidoAhora: boolean;
 }) {
   return (
@@ -50,7 +50,7 @@ export default function InicioActivo({
           </div>
           {/* El interruptor va junto al título "Tu aviso", y el plazo debajo. */}
           <ControlAviso t={t} encendido fireAt={plazo.fireAt} frecuencia={plazo.frecuencia} dias={plazo.dias} notaEditar={t.editarDesactivado} graciaMin={graciaMin} titulo={t.tuAviso}>
-            <PlazoActivo t={t} fireAt={plazo.fireAt} frecuencia={plazo.frecuencia} dias={plazo.dias} />
+            <PlazoActivo t={t} fireAt={plazo.fireAt} frecuencia={plazo.frecuencia} dias={plazo.dias} activadoEn={plazo.activadoEn} />
           </ControlAviso>
         </Tarjeta>
       </main>
