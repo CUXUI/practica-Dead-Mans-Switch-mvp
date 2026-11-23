@@ -24,6 +24,7 @@ export type Inicial = {
   frecuencia: Frecuencia;
   dias: number[];
   graciaMin: number;
+  escalaMin: number;
   mensaje: string;
   contactos: string[];
 };
@@ -32,10 +33,18 @@ type Limites = {
   graciaOpciones: number[];
   graciaMin: number;
   graciaMax: number;
+  escalaOpciones: number[];
   mensajeMax: number;
 };
 
 export type Paso = "hora" | "contactos" | "resumen";
+
+// Se calcula aquí y no en textos.ts: los textos viajan del servidor al navegador y no pueden llevar funciones.
+function etiquetaEscala(m: number): string {
+  if (m < 60) return `${m} min`;
+  if (m === 60) return "1 hora";
+  return `${m / 60} horas`;
+}
 
 const ORDEN: Paso[] = ["hora", "contactos", "resumen"];
 
@@ -71,6 +80,7 @@ export default function ConfigurarAviso({
   const setGracia = (min: number) => setGraciaLibre(Math.min(limites.graciaMax, Math.max(limites.graciaMin, min)));
   // Tras mover un contacto, el foco sigue a ese contacto (la flecha pulsada puede desaparecer).
   const [focoTras, setFocoTras] = useState<{ id: string; arriba: boolean } | null>(null);
+  const [escalaMin, setEscalaMin] = useState(inicial.escalaMin);
   const [mensaje, setMensaje] = useState(inicial.mensaje);
   const [enAviso, setEnAviso] = useState<string[]>(inicial.contactos);
 
@@ -169,6 +179,7 @@ export default function ConfigurarAviso({
         frecuencia,
         dias,
         graciaMin: gracia,
+        escalaMin,
         mensaje,
         contactos: enAviso,
         fireAt: plazo.toISOString(),
@@ -469,6 +480,29 @@ export default function ConfigurarAviso({
               {errores.contactos}
             </p>
           )}
+          {elegidos.length > 1 && (
+            <div className="space-y-2">
+              <label htmlFor="escala" className={clases.etiqueta}>
+                {t.contactos.escalaEtiqueta}
+              </label>
+              <select
+                id="escala"
+                value={escalaMin}
+                onChange={(e) => setEscalaMin(Number(e.target.value))}
+                aria-describedby="escala-ayuda"
+                className={clases.campo}
+              >
+                {limites.escalaOpciones.map((m) => (
+                  <option key={m} value={m}>
+                    {etiquetaEscala(m)}
+                  </option>
+                ))}
+              </select>
+              <p id="escala-ayuda" className={clases.ayuda}>
+                {t.contactos.escalaAyuda}
+              </p>
+            </div>
+          )}
           {otros.length > 0 && (
             <div className="space-y-3">
               <h3 className="font-semibold">{t.contactos.otros}</h3>
@@ -545,6 +579,12 @@ export default function ConfigurarAviso({
             <span aria-hidden="true">{duracion(gracia)}</span>
             <span className="sr-only">{duracionLarga(gracia)}</span>
           </Dato>
+          {elegidos.length > 1 && (
+            <Dato termino={t.resumen.escala}>
+              <span aria-hidden="true">{etiquetaEscala(escalaMin)}</span>
+              <span className="sr-only">{`Si no responde en ${duracionLarga(escalaMin)}, avisamos al siguiente`}</span>
+            </Dato>
+          )}
           {mensaje.trim() && <Dato termino={t.resumen.mensaje}>{mensaje.trim()}</Dato>}
         </dl>
       </Tarjeta>

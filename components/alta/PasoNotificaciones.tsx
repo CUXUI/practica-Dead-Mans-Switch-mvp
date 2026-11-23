@@ -11,8 +11,8 @@ import { IconoCampana, IconoCampanaTachada, IconoCargando } from "@/components/a
 // Onboarding · Paso 1 de 3: notificaciones. Estados de los wireframes: pedir, activas y
 // desactivadas. Si las rechaza, se explica para qué sirven, que recibirá solo correo, y sigue.
 
-// Paso siguiente: Contactos (flujo 3) todavía no existe; por ahora, Home.
-const SIGUIENTE = "/home";
+// Paso 2 de 3: primer contacto (/contactos/nuevo, en modo alta).
+const SIGUIENTE = "/contactos/nuevo";
 
 type Estado = "cargando" | "pedir" | "activas" | "desactivadas" | "ios-sin-instalar";
 

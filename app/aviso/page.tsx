@@ -68,6 +68,7 @@ export default async function Aviso() {
     frecuencia: ((aviso?.recurrence as Frecuencia | undefined) ?? "once"),
     dias: datos?.dias ?? [],
     graciaMin: aviso?.grace_minutes ?? cfg.graciaPorDefecto,
+    escalaMin: (aviso?.escalation_minutes as number | undefined) ?? CONFIG_EMISOR.escalado.porDefecto,
     mensaje: datos?.mensaje ?? "",
     contactos: enAviso,
   };
@@ -82,6 +83,7 @@ export default async function Aviso() {
         graciaOpciones: CONFIG_EMISOR.gracia.opciones,
         graciaMin: CONFIG_EMISOR.gracia.minimoMin,
         graciaMax: CONFIG_EMISOR.gracia.maximoMin,
+        escalaOpciones: CONFIG_EMISOR.escalado.opciones,
         mensajeMax: CONFIG_EMISOR.mensajeMax,
       }}
       volverHref={aviso ? "/home" : "/contactos"}

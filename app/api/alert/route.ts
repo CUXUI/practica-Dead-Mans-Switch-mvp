@@ -4,8 +4,8 @@ import { sendEmail } from "@/lib/email";
 import { getBrand } from "@/lib/brand";
 import { sendPushToUser } from "@/lib/push";
 import {
-  MINUTOS_ENTRE_CONTACTOS,
   HORAS_VENCIMIENTO,
+  minutosEscalado,
   appUrl,
   avisarAContacto,
   contactosDelAviso,
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
 
   const { data: notice, error: noticeErr } = await admin
     .from("notices")
-    .select("id, issuer_id, state, fire_at")
+    .select("id, issuer_id, state, fire_at, escalation_minutes")
     .eq("id", noticeId)
     .maybeSingle();
   if (noticeErr) {
@@ -140,7 +140,7 @@ export async function POST(req: NextRequest) {
     await avisarAContacto(admin, alertaId, contactos[0], quien);
   }
   if (contactos.length > 1) {
-    const proximo = new Date(ahora.getTime() + MINUTOS_ENTRE_CONTACTOS * 60 * 1000);
+    const proximo = new Date(ahora.getTime() + minutosEscalado(notice.escalation_minutes) * 60 * 1000);
     await programarLlamada("/api/alert/siguiente", { alert_id: alertaId, posicion: 2 }, proximo).catch((e) =>
       console.error("[alert] no se pudo programar el siguiente contacto:", e)
     );

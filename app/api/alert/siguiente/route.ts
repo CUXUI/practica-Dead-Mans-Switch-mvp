@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { MINUTOS_ENTRE_CONTACTOS, avisarAContacto, contactosDelAviso, firmaValida, programarLlamada } from "@/lib/motor";
+import { avisarAContacto, contactosDelAviso, firmaValida, minutosEscalado, programarLlamada } from "@/lib/motor";
 
 // POST /api/alert/siguiente  { alert_id, posicion }
 // Avisa al contacto que sigue en la lista (S2). Se detiene si la alerta ya no está abierta
@@ -52,7 +52,8 @@ export async function POST(req: NextRequest) {
   await admin.from("alerts").update({ last_stage: posicion }).eq("id", alertaId);
 
   if (posicion < contactos.length) {
-    const proximo = new Date(Date.now() + MINUTOS_ENTRE_CONTACTOS * 60 * 1000);
+    const { data: aviso } = await admin.from("notices").select("escalation_minutes").eq("id", alerta.notice_id).maybeSingle();
+    const proximo = new Date(Date.now() + minutosEscalado(aviso?.escalation_minutes) * 60 * 1000);
     await programarLlamada("/api/alert/siguiente", { alert_id: alertaId, posicion: posicion + 1 }, proximo).catch(
       (e) => console.error("[siguiente] no se pudo programar el próximo contacto:", e)
     );

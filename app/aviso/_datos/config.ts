@@ -17,6 +17,12 @@ export const CONFIG_EMISOR = {
     maximoMin: 24 * 60,
   },
 
+  // Tiempo que pasa sin respuesta antes de avisar al siguiente contacto (escalado). Solo importa con 2 o más.
+  escalado: {
+    opciones: [5, 10, 15, 30, 60, 120],
+    porDefecto: 30,
+  },
+
   // Minutos antes de la hora del aviso en que ya se puede confirmar "Estoy bien" (E-02: "Podrás confirmar
   // desde las 7:30 p. m." para un aviso de las 8:00 p. m.). Sale del wireflow, no del PRD: por validar.
   ventanaConfirmarMin: 30,

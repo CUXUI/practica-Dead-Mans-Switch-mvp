@@ -16,6 +16,7 @@ export type DatosAviso = {
   frecuencia: Frecuencia;
   dias: number[];
   graciaMin: number;
+  escalaMin: number; // minutos sin respuesta antes de avisar al siguiente contacto
   mensaje: string;
   contactos: string[]; // ids en orden de aviso
   fireAt: string; // próximo plazo, calculado en el navegador con su zona horaria
@@ -35,6 +36,7 @@ export async function guardarAviso(d: DatosAviso): Promise<ResultadoAviso> {
   if (d.frecuencia === "weekly" && dias.length === 0) return falla(t.hora.errorDias);
   if (!Number.isInteger(d.graciaMin) || d.graciaMin < CONFIG_EMISOR.gracia.minimoMin || d.graciaMin > CONFIG_EMISOR.gracia.maximoMin)
     return falla(t.hora.errorGracia);
+  if (!CONFIG_EMISOR.escalado.opciones.includes(d.escalaMin)) return falla();
   const fire = new Date(d.fireAt);
   const margen = fire.getTime() - Date.now();
   if (Number.isNaN(fire.getTime()) || margen < 30_000 || margen > 8 * 86_400_000) return falla(t.hora.errorPasada);
@@ -65,6 +67,7 @@ export async function guardarAviso(d: DatosAviso): Promise<ResultadoAviso> {
     recurrence: d.frecuencia,
     fire_at: fire.toISOString(),
     grace_minutes: d.graciaMin,
+    escalation_minutes: d.escalaMin,
     state: "off",
     updated_at: new Date().toISOString(),
   };

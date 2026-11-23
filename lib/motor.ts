@@ -6,8 +6,12 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { sendEmail } from "@/lib/email";
 import { getBrand } from "@/lib/brand";
 
-// Tiempo entre un contacto y el siguiente. Valor provisorio (el PRD no lo define): 30 min.
+// Tiempo entre un contacto y el siguiente cuando el aviso no tiene uno guardado. Lo elige quien emite en /aviso.
 export const MINUTOS_ENTRE_CONTACTOS = 30;
+// Minutos de escalado del aviso; si el dato falta o no es válido, se usa el valor por defecto.
+export function minutosEscalado(valor: unknown): number {
+  return typeof valor === "number" && valor >= 5 && valor <= 240 ? valor : MINUTOS_ENTRE_CONTACTOS;
+}
 // Vencimiento por tiempo si nadie cierra la alerta (S5, decidido: 48 h).
 export const HORAS_VENCIMIENTO = 48;
 

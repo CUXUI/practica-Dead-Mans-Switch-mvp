@@ -44,6 +44,9 @@ const COMUNES = {
     otros: "Otros contactos",
     subir: "Subir a {nombres}",
     bajar: "Bajar a {nombres}",
+    // Tiempo sin respuesta antes de pasar al siguiente contacto. Solo se muestra con 2 o más contactos.
+    escalaEtiqueta: "Esperar sin respuesta antes de avisar al siguiente",
+    escalaAyuda: "Si alguien no responde en este tiempo, avisamos al siguiente de la lista.",
     errorNinguno: "Añade al menos un contacto a este aviso.",
     // E-04 · Contactos: "Esperando que acepte la invitación. Podrás añadirla cuando acepte." (sin género).
     pendiente: "Esperando que acepte la invitación. Podrás añadir al contacto cuando acepte.",
@@ -68,6 +71,7 @@ const COMUNES = {
     frecuencia: "Frecuencia",
     hora: "Hora del aviso",
     gracia: "Tiempo de gracia",
+    escala: "Espera antes del siguiente contacto",
     // PRD 12/11: contactos y pasos visibles sin abrir nada. Los pasos son los contactos en orden,
     // así que van en una sola lista numerada, cada uno con su estado.
     pasos: "Contactos y pasos a seguir",
