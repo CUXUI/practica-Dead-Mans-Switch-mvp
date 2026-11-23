@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { getBrand } from "@/lib/brand";
 import { textosInicio } from "@/components/home/textosInicio";
-import { CONFIG_EMISOR } from "./_datos/config";
 import { exigirSesion } from "./_datos/sesion";
 import { cancelarProgramado, programar } from "./_datos/qstash";
 
@@ -73,7 +72,7 @@ export async function apagarAviso(): Promise<ResultadoEstado> {
 
   const { data: aviso, error: errA } = await s.supabase
     .from("notices")
-    .select("id, state, fire_at, qstash_message_id")
+    .select("id, state, fire_at, qstash_message_id, activated_at")
     .eq("issuer_id", s.user.id)
     .in("state", ["active", "alert"])
     .maybeSingle();
@@ -81,9 +80,6 @@ export async function apagarAviso(): Promise<ResultadoEstado> {
   if (!aviso) return { ok: true }; // ya estaba apagado
   // Con una alerta en curso no se apaga: se cancela con "Estoy bien, cancelar alerta" (E-10).
   if (aviso.state === "alert") return { ok: false, error: t.enAlerta };
-  // "¿Se puede apagar ahora?" (wireflow): no mientras se espera la confirmación (ventana y gracia).
-  const desde = new Date(aviso.fire_at).getTime() - CONFIG_EMISOR.ventanaConfirmarMin * 60_000;
-  if (Date.now() >= desde) return { ok: false, error: t.enVentana };
 
   const { error } = await s.supabase
     .from("notices")

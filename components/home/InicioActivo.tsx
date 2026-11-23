@@ -46,10 +46,10 @@ export default function InicioActivo({
           {/* "Editar" siempre está: desactivado con el aviso encendido, se activa al apagarlo. */}
           <div className="flex items-center justify-between gap-2">
             <Badge>{t.activo}</Badge>
-            <EditarActivo fireAt={plazo.fireAt} texto={t.editar} aria={t.editarAria} titulo={t.editarDesactivado} />
+            <EditarActivo texto={t.editar} aria={t.editarAria} titulo={t.editarDesactivado} />
           </div>
           {/* El interruptor va junto al título "Tu aviso", y el plazo debajo. */}
-          <ControlAviso t={t} encendido fireAt={plazo.fireAt} frecuencia={plazo.frecuencia} dias={plazo.dias} notaEditar={t.editarDesactivado} graciaMin={graciaMin} titulo={t.tuAviso}>
+          <ControlAviso t={t} encendido fireAt={plazo.fireAt} frecuencia={plazo.frecuencia} dias={plazo.dias} notaEditar={t.editarDesactivado} graciaMin={graciaMin} activadoEn={plazo.activadoEn} titulo={t.tuAviso}>
             <PlazoActivo t={t} fireAt={plazo.fireAt} frecuencia={plazo.frecuencia} dias={plazo.dias} activadoEn={plazo.activadoEn} />
           </ControlAviso>
         </Tarjeta>

@@ -35,7 +35,7 @@ export async function confirmarAviso(entrada: { plazo: string; proximo: string |
   // 1. Leer el aviso abierto (hay como máximo uno activo o en alerta por persona).
   const { data: aviso, error: errA } = await s.supabase
     .from("notices")
-    .select("id, state, recurrence, fire_at, grace_minutes, qstash_message_id")
+    .select("id, state, recurrence, fire_at, grace_minutes, qstash_message_id, activated_at")
     .eq("issuer_id", s.user.id)
     .in("state", ["active", "alert"])
     .maybeSingle();
@@ -43,7 +43,7 @@ export async function confirmarAviso(entrada: { plazo: string; proximo: string |
 
   if (!aviso) {
     // "Solo hoy" ya confirmado y apagado: la respuesta anterior se perdió en el camino.
-    if (entrada.proximo === null && (await yaConfirmado(s, null, plazoCliente))) return { ok: true };
+    if (entrada.proximo === null && (await yaConfirmado(s, null, plazoCliente - CONFIG_EMISOR.ventanaConfirmarMin * MIN))) return { ok: true };
     return fija(t.cambio);
   }
   if (aviso.state === "alert") return fija(t.enAlerta);
@@ -55,13 +55,13 @@ export async function confirmarAviso(entrada: { plazo: string; proximo: string |
   if (plazo !== plazoCliente) {
     // Reintento de una confirmación que sí se guardó: el aviso ya está en el plazo que mandó el navegador.
     const proximo = entrada.proximo ? new Date(entrada.proximo).getTime() : NaN;
-    if (plazo === proximo && (await yaConfirmado(s, aviso.id as string, plazoCliente))) return { ok: true };
+    if (plazo === proximo && (await yaConfirmado(s, aviso.id as string, inicioVentana(aviso, plazo)))) return { ok: true };
     return fija(t.cambio);
   }
 
   // 2. Solo dentro de la ventana: desde 30 min antes del plazo hasta el final del tiempo de gracia.
   const ahora = Date.now();
-  if (ahora < plazo - CONFIG_EMISOR.ventanaConfirmarMin * MIN) return fija(t.temprano);
+  if (ahora < inicioVentana(aviso, plazo)) return fija(t.temprano);
   if (ahora > plazo + graciaMin * MIN) return fija(t.tarde);
 
   const unaVez = aviso.recurrence === "once";
@@ -139,14 +139,20 @@ function validarProximo(valor: string | null, plazo: number, recurrence: string,
   return proximo;
 }
 
+// Desde cuándo se puede confirmar: desde que se encendió el aviso (activated_at). Si no hay dato, 30 min antes del plazo.
+function inicioVentana(aviso: { activated_at?: unknown }, plazo: number): number {
+  const activado = typeof aviso.activated_at === "string" ? new Date(aviso.activated_at).getTime() : NaN;
+  return Number.isNaN(activado) ? plazo - CONFIG_EMISOR.ventanaConfirmarMin * MIN : activado;
+}
+
 // ¿Hay una confirmación guardada para ese plazo? Sirve para responder ok, sin guardar otra, cuando el
 // navegador reintenta porque no le llegó la respuesta de una confirmación que sí quedó registrada.
-async function yaConfirmado(s: Awaited<ReturnType<typeof exigirSesion>>, noticeId: string | null, plazo: number) {
+async function yaConfirmado(s: Awaited<ReturnType<typeof exigirSesion>>, noticeId: string | null, desde: number) {
   let consulta = s.supabase
     .from("confirmations")
     .select("id")
     .eq("issuer_id", s.user.id)
-    .gte("confirmed_at", new Date(plazo - CONFIG_EMISOR.ventanaConfirmarMin * MIN).toISOString())
+    .gte("confirmed_at", new Date(desde).toISOString())
     .limit(1);
   if (noticeId) consulta = consulta.eq("notice_id", noticeId);
   const { data } = await consulta;

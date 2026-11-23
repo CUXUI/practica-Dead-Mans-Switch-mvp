@@ -45,11 +45,14 @@ export default function ControlAviso({
   detalle,
   notaEditar,
   graciaMin = 0,
+  activadoEn,
   titulo,
   children,
 }: {
   // Con título, el interruptor va a la derecha del título y lo que se pasa como hijo (el plazo) queda debajo.
   titulo?: string;
+  // Hora en que se encendió: desde aquí se puede confirmar "Estoy bien" (si no hay, 30 min antes del plazo).
+  activadoEn?: string | null;
   children?: ReactNode;
   // Minutos de tiempo de gracia del aviso (pasada la hora, antes de avisar a los contactos).
   graciaMin?: number;
@@ -68,8 +71,11 @@ export default function ControlAviso({
   const [fase, setFase] = useState<Fase>("reposo");
   const [error, setError] = useState<string | null>(null);
   const [, empezar] = useTransition();
-  const [bloqueado, setBloqueado] = useState(false);
+  // Ventana para confirmar "Estoy bien": desde que se encendió hasta el fin del tiempo de gracia. No bloquea apagar.
+  const [ventana, setVentana] = useState(false);
   const [enGracia, setEnGracia] = useState(false);
+  // Dentro de los 30 min previos a la hora (o en gracia): el texto dice "Es hora de confirmar".
+  const [cercaHora, setCercaHora] = useState(false);
   const [confirmando, setConfirmando] = useState(false);
   const [errorConfirmar, setErrorConfirmar] = useState<string | null>(null);
   // Reintento automático pendiente: "red" espera a que vuelva la conexión; "pronto", a que pase la pausa.
@@ -81,17 +87,20 @@ export default function ControlAviso({
   const aviso = useRef<HTMLDivElement>(null);
   const pregunta = useRef<HTMLParagraphElement>(null);
 
-  // Mientras se espera la confirmación no se puede apagar (ventana antes de la hora y tiempo de gracia).
+  // Estado del bloque de confirmar: se puede confirmar desde que se encendió hasta el fin de la gracia.
   useEffect(() => {
     const calcula = () => {
+      const ahora = Date.now();
       const f = new Date(fireAt).getTime();
-      setBloqueado(encendido && Date.now() >= f - CONFIG_EMISOR.ventanaConfirmarMin * 60_000);
-      setEnGracia(encendido && Date.now() >= f);
+      const inicio = activadoEn ? new Date(activadoEn).getTime() : f - CONFIG_EMISOR.ventanaConfirmarMin * 60_000;
+      setVentana(encendido && ahora >= inicio && ahora <= f + graciaMin * 60_000);
+      setCercaHora(encendido && ahora >= f - CONFIG_EMISOR.ventanaConfirmarMin * 60_000);
+      setEnGracia(encendido && ahora >= f);
     };
     calcula();
     const id = setInterval(calcula, 30_000);
     return () => clearInterval(id);
-  }, [encendido, fireAt]);
+  }, [encendido, fireAt, activadoEn, graciaMin]);
 
   useEffect(() => {
     if (fase === "confirmando") pregunta.current?.focus();
@@ -275,8 +284,7 @@ export default function ControlAviso({
       type="button"
       role="switch"
       aria-checked={encendido}
-      aria-describedby={bloqueado ? "no-se-puede-apagar" : undefined}
-      disabled={ocupado || bloqueado}
+      disabled={ocupado}
       onClick={alternar}
       className="relative inline-flex h-8 w-14 shrink-0 items-center rounded-full border-2 border-text bg-surface transition-colors disabled:opacity-60 aria-checked:bg-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
     >
@@ -357,16 +365,18 @@ export default function ControlAviso({
             ) : (
               <div className="flex items-center gap-3">
                 {interruptor}
-                {!bloqueado && <span className="text-sm">{etiqueta}</span>}
+                {!ventana && <span className="text-sm">{etiqueta}</span>}
               </div>
             );
           })()}
-          {bloqueado ? (
+          {ventana ? (
             <div id="no-se-puede-apagar" className="space-y-1 rounded-lg bg-surface-muted p-3">
-              <p className="font-semibold">{enGracia ? t.graciaTitulo : t.noSePuedeTitulo}</p>
+              <p className="font-semibold">{enGracia ? t.graciaTitulo : cercaHora ? t.noSePuedeTitulo : t.confirmarTitulo}</p>
               <p className="text-sm text-text-muted">{enGracia
                   ? rellenar(t.graciaTexto, { hasta: horaDe(new Date(new Date(fireAt).getTime() + graciaMin * 60_000)) })
-                  : rellenar(t.noSePuedeTexto, { hasta: horaDe(new Date(fireAt)) })}</p>
+                  : cercaHora
+                    ? rellenar(t.noSePuedeTexto, { hasta: horaDe(new Date(fireAt)) })
+                    : rellenar(t.confirmarTexto, { hasta: horaDe(new Date(new Date(fireAt).getTime() + graciaMin * 60_000)) })}</p>
               {/* Nunca "confirmado" sin servidor: si no llegó, se dice y se reintenta solo. */}
               <p role="alert" className="text-sm font-medium text-danger empty:hidden">
                 {espera === "red" ? t.confirmar.sinRed : espera === "pronto" ? t.confirmar.reintentando : (errorConfirmar ?? "")}

@@ -65,6 +65,9 @@ const COMUNES = {
   dejarActivo: "Dejarlo activo",
   // Dentro de los 30 min previos a la hora: ni se apaga ni se edita.
   noSePuedeTitulo: "Es hora de confirmar",
+  // Desde que se enciende el aviso hasta la hora del disparo más el tiempo de gracia.
+  confirmarTitulo: "Confirma que estás bien",
+  confirmarTexto: "Puedes confirmar hasta las {hasta}.",
   // Pasada la hora y antes de avisar a los contactos.
   graciaTitulo: "Estás en el tiempo de gracia",
   graciaTexto: "La hora de tu aviso ya pasó. Confirma que estás bien antes de las {hasta} o avisaremos a tus contactos.",

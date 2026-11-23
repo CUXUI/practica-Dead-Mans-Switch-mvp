@@ -1,21 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { CONFIG_EMISOR } from "@/app/aviso/_datos/config";
-
-// "Editar" del Inicio con el aviso encendido: desactivado mientras está encendido, y no se ve en los
-// 30 min previos a la hora (ni se apaga ni se edita; el bloque de abajo lo explica).
-export default function EditarActivo({ fireAt, texto, aria, titulo }: { fireAt: string; texto: string; aria: string; titulo: string }) {
-  const [bloqueado, setBloqueado] = useState(false);
-
-  useEffect(() => {
-    const calcula = () => setBloqueado(Date.now() >= new Date(fireAt).getTime() - CONFIG_EMISOR.ventanaConfirmarMin * 60_000);
-    calcula();
-    const id = setInterval(calcula, 30_000);
-    return () => clearInterval(id);
-  }, [fireAt]);
-
-  if (bloqueado) return null;
+// "Editar" del Inicio con el aviso encendido: siempre se ve, desactivado (apaga primero para editarlo).
+export default function EditarActivo({ texto, aria, titulo }: { texto: string; aria: string; titulo: string }) {
   return (
     <button
       type="button"
