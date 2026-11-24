@@ -14,7 +14,8 @@ export const SECCIONES = [
 ] as const;
 
 export default function NavDS() {
-  const ruta = usePathname();
+  // Sin la barra final: una copia estática sirve /design-system/.
+  const ruta = usePathname().replace(/\/$/, "") || "/";
   return (
     <nav aria-label="Secciones del design system" className="-mx-espacio-l overflow-x-auto px-espacio-l lg:mx-0 lg:overflow-visible lg:px-0">
       <ul className="flex gap-espacio-xs lg:flex-col">
