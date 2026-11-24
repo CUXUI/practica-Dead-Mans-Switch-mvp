@@ -24,7 +24,7 @@ export default function OrganizacionesPage() {
         <p className="mt-4 text-lg text-text-muted">{t.cuerpo}</p>
 
         <section aria-labelledby="personalizas" className="mt-10">
-          <h2 id="personalizas" className="text-2xl font-bold leading-8">
+          <h2 id="personalizas" className="text-seccion leading-8">
             {t.personalizas.titulo}
           </h2>
           <ul className="mt-4 grid gap-4 sm:grid-cols-3">
@@ -50,7 +50,7 @@ export default function OrganizacionesPage() {
         </section>
 
         <section aria-labelledby="misma-app" className="mt-10">
-          <h2 id="misma-app" className="text-2xl font-bold leading-8">
+          <h2 id="misma-app" className="text-seccion leading-8">
             {t.mismaApp.titulo}
           </h2>
           <p className="mt-3 text-text-muted">{t.mismaApp.cuerpo}</p>

@@ -40,7 +40,7 @@ export default function InicioActivo({
         {encendidoAhora && <Toast texto={t.encendido} quitarParametro="encendido" />}
         {canceladaAhora && <Toast texto={canceladaAhora} quitarParametro="alerta" />}
         <Encabezado nombre={app} />
-        <h1 className="text-2xl font-semibold">{nombre ? rellenar(t.hola, { nombre }) : t.holaSinNombre}</h1>
+        <h1 className="text-seccion">{nombre ? rellenar(t.hola, { nombre }) : t.holaSinNombre}</h1>
         {confirmadoEn && <ConfirmacionHecha t={t} confirmadoEn={confirmadoEn} proximo={plazo.fireAt} />}
         <Tarjeta>
           {/* "Editar" siempre está: desactivado con el aviso encendido, se activa al apagarlo. */}

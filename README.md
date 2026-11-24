@@ -2,6 +2,10 @@
 
 Web app (PWA) de marca blanca. Lee `AGENTS.md` antes de tocar nada. Los flujos y duplas están en `docs/FLUJOS.md`.
 
+## Design system
+
+Documentación viva en `/design-system`. Guía corta en `docs/DESIGN_SYSTEM.md`.
+
 ## Puesta en marcha (una vez, por el núcleo)
 
 1. Instalar Node.js LTS (nodejs.org).

@@ -1,0 +1,109 @@
+/* GENERADO por tokens/generar.mjs a partir de tokens/tokens.json. No editar a mano. */
+
+@theme {
+  /* Solo existen los colores del sistema: se quita la paleta por defecto de Tailwind. */
+  --color-*: initial;
+
+  /* Color · semánticos (tema Base) */
+  --color-fondo-lienzo: #f7f7f7; /* Fondo general de cada pantalla */
+  --color-fondo-superficie: #ffffff; /* Tarjetas, formularios y paneles */
+  --color-fondo-sutil: #f0f0f0; /* Agrupar contenido sin indicar estado */
+  --color-fondo-inverso: #262626; /* Zonas oscuras con texto inverso */
+  --text-color-principal: #1f1f1f; /* Títulos, instrucciones y contenido esencial */
+  --text-color-secundario: #555555; /* Información complementaria, no alertas críticas */
+  --text-color-inverso: #ffffff; /* Texto sobre fondos oscuros */
+  --text-color-sobre-desactivada: #3f3f3f; /* Texto de control desactivado con explicación */
+  --color-accion-principal: #262626; /* Botón de la acción principal. Es el único color que cambia entre marcas. */
+  --color-accion-principal-pulsada: #0d0d0d; /* Estado pulsado de la acción principal */
+  --color-accion-desactivada: #d1d1d1; /* Fondo del control no disponible */
+  --color-borde-control: #767676; /* Campos, botones secundarios y controles */
+  --color-borde-sutil: #d1d1d1; /* Separadores decorativos, no controles */
+  --color-foco-anillo: #3f3f3f; /* Foco de teclado de 3 px separado 2 px */
+  --color-estado-aviso-fondo: #e8e8e8; /* Aviso con palabra e icono */
+  --color-estado-error-fondo: #e1e1e1; /* Error con palabra e icono */
+  --color-estado-exito-fondo: #f0f0f0; /* Confirmación con palabra e icono */
+  --text-color-estado-o: #262626; /* Texto e icono de estados */
+  /* estado/texto también como color de fondo y borde (íconos, marcadores) */
+  --color-estado-texto: #262626;
+
+  /* Color · primitivos */
+  --color-negro: #000000; /* Negro puro. Base para fondos de overlays (scrim) y sombras. */
+  --color-gris-100: #f5f5f5; /* Primitivo */
+  --color-gris-200: #e5e5e5; /* Primitivo */
+  --color-gris-900: #171717; /* Primitivo */
+
+  /* Color · extensión en código (pendiente en Figma) */
+  --color-estado-error-texto: #b3261e; /* Texto y borde de un error en formularios. Siempre va con ícono y palabra. */
+  --color-estado-exito-texto: #1b6e3c; /* Texto de una confirmación. Siempre va con ícono y palabra. */
+
+  /* Espacio y tamaño */
+  --spacing-espacio-xs: 4px; /* Icono junto a texto muy relacionado */
+  --spacing-espacio-s: 8px; /* Etiqueta y campo */
+  --spacing-espacio-m: 12px; /* Elementos de un mismo bloque */
+  --spacing-espacio-l: 16px; /* Padding interno de controles */
+  --spacing-espacio-xl: 24px; /* Separación entre bloques */
+  --spacing-espacio-2xl: 32px; /* Padding de tarjeta y separación de grupos */
+  --spacing-espacio-seccion: 48px; /* Separación entre secciones */
+  --spacing-tamano-control-minimo: 48px; /* Alto mínimo de botones y campos */
+  --spacing-tamano-icono: 24px; /* Iconos de acción y estado */
+  --spacing-tamano-icono-s: 20px; /* Ícono pequeño junto a texto 14/21 */
+  --spacing-tamano-logo: 32px; /* Lado del logo dentro de la Marca de la app */
+  --spacing-tamano-caja-hora: 72px; /* Alto de la Caja de hora del Selector de hora */
+
+  /* Radio (--spacing-radio-* se mantiene por compatibilidad con el export de Supernova) */
+  --spacing-radio-s: 8px;
+  --radius-radio-s: 8px; /* Controles pequeños */
+  --spacing-radio-m: 12px;
+  --radius-radio-m: 12px; /* Botones y campos */
+  --spacing-radio-l: 16px;
+  --radius-radio-l: 16px; /* Tarjetas y paneles */
+  --spacing-radio-pill: 999px;
+  --radius-radio-pill: 999px; /* Etiquetas tipo píldora */
+
+  /* Tipografía */
+  --font-sans: var(--fuente-inter, "Inter"), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --text-pantalla: 28px; /* Título/Pantalla · Título principal de pantalla (h1) */
+  --text-pantalla--line-height: 36px;
+  --text-pantalla--font-weight: 700;
+  --text-seccion: 24px; /* Título/Sección · Título de sección y saludo */
+  --text-seccion--line-height: 32px;
+  --text-seccion--font-weight: 700;
+  --text-tarjeta: 20px; /* Título/Tarjeta · Título de tarjeta y de diálogo */
+  --text-tarjeta--line-height: 28px;
+  --text-tarjeta--font-weight: 600;
+  --text-bloque: 18px; /* Título/Bloque · Título de un bloque dentro de una pantalla */
+  --text-bloque--line-height: 28px;
+  --text-bloque--font-weight: 600;
+  --text-etiqueta: 16px; /* Etiqueta · Etiquetas de campo y filas */
+  --text-etiqueta--line-height: 24px;
+  --text-etiqueta--font-weight: 600;
+  --text-boton: 16px; /* Botón · Texto de los botones */
+  --text-boton--line-height: 24px;
+  --text-boton--font-weight: 700;
+  --text-cuerpo: 16px; /* Cuerpo · Instrucciones y alertas */
+  --text-cuerpo--line-height: 24px;
+  --text-cuerpo--font-weight: 400;
+  --text-pequeno: 14px; /* Cuerpo/Pequeño · Metadatos no críticos */
+  --text-pequeno--line-height: 21px;
+  --text-pequeno--font-weight: 400;
+
+  /* Movimiento */
+  --duracion-rapida: 120ms; /* Cambios de color al pasar o presionar */
+  --duracion-media: 250ms; /* Cambio de destino en la barra de navegación, interruptor, entradas */
+  --duracion-lenta: 450ms; /* Confirmaciones (doble check) */
+  --ease-estandar: cubic-bezier(0.2, 0, 0, 1); /* Curva por defecto */
+}
+
+/* Temas de marca. Se activan con data-tema en <html> o en cualquier contenedor. */
+[data-tema="cerca"] {
+  --color-accion-principal: #b2102e;
+}
+[data-tema="montana"] {
+  --color-accion-principal: #1c7c70;
+}
+[data-tema="base"] {
+  --color-accion-principal: #262626;
+}

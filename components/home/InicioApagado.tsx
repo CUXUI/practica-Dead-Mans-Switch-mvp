@@ -72,12 +72,12 @@ export default function InicioApagado({
         {canceladaAhora && <Toast texto={canceladaAhora} quitarParametro="alerta" />}
         {apagadoAhora && <Toast texto={t.apagadoListo} quitarParametro="apagado" />}
         <Encabezado nombre={app} />
-        <h1 className="text-2xl font-semibold">{nombre ? rellenar(t.hola, { nombre }) : t.holaSinNombre}</h1>
+        <h1 className="text-seccion">{nombre ? rellenar(t.hola, { nombre }) : t.holaSinNombre}</h1>
         {confirmadoEn && <ConfirmacionHecha t={t} confirmadoEn={confirmadoEn} proximo={null} />}
         <Tarjeta>
           {/* Jerarquía: 1) qué es (título y Editar), 2) en qué estado está y qué hacer, 3) avisos aparte. */}
           <div className="flex items-center justify-between gap-2">
-            <h2 className="text-lg font-semibold">{t.tuAviso}</h2>
+            <h2 className="text-bloque">{t.tuAviso}</h2>
             <Link href="/aviso" className={clases.enlace} aria-label={t.editarAria}>
               {t.editar}
             </Link>

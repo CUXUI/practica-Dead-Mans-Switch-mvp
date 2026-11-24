@@ -8,7 +8,7 @@ export default function EstadoVacio({ icono, titulo, texto }: { icono: ReactNode
       <span aria-hidden="true" className="inline-flex size-12 items-center justify-center rounded-[var(--spacing-radio-pill)] bg-fondo-sutil">
         {icono}
       </span>
-      <h2 className="text-2xl font-bold leading-8">{titulo}</h2>
+      <h2 className="text-seccion leading-8">{titulo}</h2>
       <p className="text-base leading-6 text-text-muted">{texto}</p>
     </section>
   );

@@ -25,7 +25,7 @@ export default function FilaHistorial({ resultado, etiqueta, titulo, children }:
           {etiqueta}
         </span>
       </div>
-      <h2 className="text-xl font-semibold leading-7">{titulo}</h2>
+      <h2 className="text-tarjeta leading-7">{titulo}</h2>
       <div className="space-y-1 text-base leading-6 text-text-muted">{children}</div>
     </article>
   );

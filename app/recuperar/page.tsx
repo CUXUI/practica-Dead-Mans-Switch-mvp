@@ -1,10 +1,11 @@
 "use client";
 
+import { boton as botonDS, campo as campoDS } from "@/components/ds/estilos";
 import { useState } from "react";
 import Link from "next/link";
 
 const inputClass =
-  "w-full min-h-11 rounded-lg border border-border bg-surface px-3 py-2 text-text focus:outline-2 focus:outline-brand-primary";
+  campoDS.control;
 
 // Olvidé mi contraseña: envía un enlace al correo. La respuesta es la misma exista o no la cuenta,
 // para no revelar qué correos están registrados.
@@ -35,7 +36,7 @@ export default function RecuperarPage() {
 
   return (
     <main className="mx-auto max-w-md space-y-6 p-6">
-      <h1 className="text-2xl font-semibold">Recuperar contraseña</h1>
+      <h1 className="text-seccion">Recuperar contraseña</h1>
       {enviado ? (
         <p role="status" className="text-text-muted">
           Si el correo está registrado, te enviamos un enlace para cambiar la contraseña. Revisa también la carpeta de spam.
@@ -51,7 +52,7 @@ export default function RecuperarPage() {
           <button
             type="submit"
             disabled={loading}
-            className="min-h-11 w-full rounded-lg bg-brand-primary px-4 py-2 font-medium text-brand-on-primary disabled:opacity-60"
+            className={`${botonDS.principal}`}
           >
             {loading ? "Enviando…" : "Enviar enlace"}
           </button>

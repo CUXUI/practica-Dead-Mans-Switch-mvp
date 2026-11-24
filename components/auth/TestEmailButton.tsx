@@ -1,5 +1,6 @@
 "use client";
 
+import { boton as botonDS } from "@/components/ds/estilos";
 import { useState } from "react";
 
 // Herramienta de verificación del núcleo. Se puede quitar cuando exista el flujo real de correos.
@@ -26,7 +27,7 @@ export default function TestEmailButton() {
         type="button"
         onClick={send}
         disabled={loading}
-        className="min-h-11 rounded-lg bg-brand-primary px-4 py-2 font-medium text-brand-on-primary disabled:opacity-60"
+        className={`${botonDS.principalAjustado}`}
       >
         {loading ? "Enviando…" : "Enviar correo de prueba"}
       </button>

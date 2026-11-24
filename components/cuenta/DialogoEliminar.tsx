@@ -94,7 +94,7 @@ export default function DialogoEliminar({ t }: { t: TextosCuenta }) {
             className="flex max-h-full w-full max-w-[340px] flex-col gap-espacio-m overflow-y-auto rounded-[var(--spacing-radio-l)] bg-surface p-espacio-xl outline-none"
           >
             <IconoAlerta />
-            <h2 id="dialogo-titulo" className="text-xl font-semibold leading-7">
+            <h2 id="dialogo-titulo" className="text-tarjeta leading-7">
               {t.dialogoTitulo}
             </h2>
             <p id="dialogo-texto" className="text-base leading-6 text-text-muted">

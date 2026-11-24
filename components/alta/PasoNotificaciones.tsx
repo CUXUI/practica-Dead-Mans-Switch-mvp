@@ -1,5 +1,6 @@
 "use client";
 
+import { boton as botonDS } from "@/components/ds/estilos";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -74,10 +75,8 @@ export default function PasoNotificaciones({ textos }: { textos: TextosAlta["not
 
   if (estado === "cargando") return null;
 
-  const botonPrincipal =
-    "flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-2 font-semibold text-brand-on-primary disabled:opacity-70";
-  const botonSecundario =
-    "flex min-h-12 w-full items-center justify-center rounded-lg border border-border bg-surface px-4 py-2 font-semibold";
+  const botonPrincipal = botonDS.principal;
+  const botonSecundario = botonDS.secundario;
 
   const comoActivar =
     plataforma === "ios"
@@ -104,7 +103,7 @@ export default function PasoNotificaciones({ textos }: { textos: TextosAlta["not
         {estado === "pedir" && (
           <>
             <IconoCampana className="size-6" />
-            <h1 className="mt-3 text-xl font-semibold">{textos.pedirTitulo}</h1>
+            <h1 className="mt-3 text-tarjeta">{textos.pedirTitulo}</h1>
             <p className="mt-2 text-text-muted">{textos.pedirCuerpo}</p>
             {error && (
               <p role="alert" className="mt-3 text-sm text-danger">
@@ -135,7 +134,7 @@ export default function PasoNotificaciones({ textos }: { textos: TextosAlta["not
               <IconoCampana className="size-6" />
               <span className="rounded-full bg-fondo-sutil px-3 py-1 text-sm">{textos.activasEtiqueta}</span>
             </div>
-            <h1 className="mt-3 text-xl font-semibold">{textos.activasTitulo}</h1>
+            <h1 className="mt-3 text-tarjeta">{textos.activasTitulo}</h1>
             <p className="mt-2 text-text-muted">{textos.activasCuerpo}</p>
           </>
         )}
@@ -143,7 +142,7 @@ export default function PasoNotificaciones({ textos }: { textos: TextosAlta["not
         {estado === "desactivadas" && (
           <>
             <IconoCampanaTachada className="size-6" />
-            <h1 className="mt-3 text-xl font-semibold">{textos.desactivadasTitulo}</h1>
+            <h1 className="mt-3 text-tarjeta">{textos.desactivadasTitulo}</h1>
             <p className="mt-2 text-text-muted">{textos.desactivadasCuerpo}</p>
             {nuncaPreguntado && pushDisponible() ? (
               <button type="button" onClick={activar} disabled={activando} className={`mt-4 ${botonPrincipal}`}>
@@ -176,7 +175,7 @@ export default function PasoNotificaciones({ textos }: { textos: TextosAlta["not
         {estado === "ios-sin-instalar" && (
           <>
             <IconoCampanaTachada className="size-6" />
-            <h1 className="mt-3 text-xl font-semibold">{textos.iosSinInstalarTitulo}</h1>
+            <h1 className="mt-3 text-tarjeta">{textos.iosSinInstalarTitulo}</h1>
             <p className="mt-2 text-text-muted">{textos.iosSinInstalarCuerpo}</p>
             <Link href="/alta/instalar" className={`mt-4 ${botonPrincipal}`}>
               {textos.verGuia}

@@ -1,5 +1,6 @@
 "use client";
 
+import { boton as botonDS } from "@/components/ds/estilos";
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -270,7 +271,7 @@ export default function RegistroForm({ textos }: { textos: TextosAlta["registro"
       <button
         type="submit"
         disabled={cargando}
-        className="flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-2 font-semibold text-brand-on-primary disabled:opacity-70"
+        className={`${botonDS.principal}`}
       >
         {cargando ? (
           <>

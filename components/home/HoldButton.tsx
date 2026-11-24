@@ -1,5 +1,6 @@
 "use client";
 
+import { boton as botonDS } from "@/components/ds/estilos";
 import { useEffect, useId, useRef, useState } from "react";
 
 // Acción deliberada (AGENTS.md): mantener presionado 2 s. Ningún toque suelto ejecuta nada.
@@ -122,7 +123,7 @@ export default function HoldButton({
           <button
             type="button"
             onClick={confirm}
-            className="min-h-12 w-full rounded-lg bg-brand-primary px-4 py-3 font-bold text-brand-on-primary focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-foco-anillo"
+            className={botonDS.principal}
           >
             {confirmYes}
           </button>
@@ -132,7 +133,7 @@ export default function HoldButton({
               reopened.current = true;
               setConfirming(false);
             }}
-            className="min-h-12 w-full rounded-lg border border-border bg-surface px-4 py-3 font-bold text-text focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-foco-anillo"
+            className={botonDS.secundario}
           >
             {confirmBack}
           </button>
@@ -187,7 +188,7 @@ export default function HoldButton({
         onPointerCancel={cancelHold}
         onContextMenu={(e) => e.preventDefault()}
         onClick={onClick}
-        className="relative block w-full touch-none select-none overflow-hidden rounded-lg border-2 border-brand-primary bg-brand-primary p-0 text-brand-on-primary disabled:opacity-60 focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-foco-anillo"
+        className="relative block w-full touch-none select-none overflow-hidden rounded-radio-m border-2 border-brand-primary bg-brand-primary p-0 text-brand-on-primary disabled:opacity-60 focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-foco-anillo"
       >
         {/* Capa de reposo: marca la altura del botón, así que crece si el texto se parte en líneas. */}
         <span aria-hidden="true" className={`relative ${capa}`}>

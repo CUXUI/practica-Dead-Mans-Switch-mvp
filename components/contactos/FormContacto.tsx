@@ -57,7 +57,7 @@ export default function FormContacto({
         {enAlta ? (
           <>
             <Progreso actual={2} total={3} siguiente={t.siguiente} />
-            <h1 className="text-xl font-semibold">{t.titulo}</h1>
+            <h1 className="text-tarjeta">{t.titulo}</h1>
             <p className="text-text-muted">{t.texto}</p>
           </>
         ) : (

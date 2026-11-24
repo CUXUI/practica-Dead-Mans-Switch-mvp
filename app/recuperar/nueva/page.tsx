@@ -1,10 +1,11 @@
 "use client";
 
+import { boton as botonDS, campo as campoDS } from "@/components/ds/estilos";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 const inputClass =
-  "w-full min-h-11 rounded-lg border border-border bg-surface px-3 py-2 text-text focus:outline-2 focus:outline-brand-primary";
+  campoDS.control;
 
 // Llega desde el enlace del correo: /recuperar/nueva?token=… El servidor valida el token y cambia la contraseña.
 export default function NuevaContrasenaPage() {
@@ -39,7 +40,7 @@ export default function NuevaContrasenaPage() {
 
   return (
     <main className="mx-auto max-w-md space-y-6 p-6">
-      <h1 className="text-2xl font-semibold">Nueva contraseña</h1>
+      <h1 className="text-seccion">Nueva contraseña</h1>
       <form onSubmit={onSubmit} className="space-y-4">
         <div>
           <label htmlFor="password" className="mb-1 block text-sm font-medium">Nueva contraseña</label>
@@ -53,7 +54,7 @@ export default function NuevaContrasenaPage() {
         <button
           type="submit"
           disabled={loading}
-          className="min-h-11 w-full rounded-lg bg-brand-primary px-4 py-2 font-medium text-brand-on-primary disabled:opacity-60"
+          className={`${botonDS.principal}`}
         >
           {loading ? "Guardando…" : "Guardar contraseña"}
         </button>

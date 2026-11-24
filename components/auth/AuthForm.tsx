@@ -1,5 +1,6 @@
 "use client";
 
+import { boton as botonDS, campo as campoDS } from "@/components/ds/estilos";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -9,7 +10,7 @@ import { IconoOjo, IconoOjoTachado } from "@/components/alta/iconos";
 type Props = { mode: "login" | "registro" };
 
 const inputClass =
-  "w-full min-h-11 rounded-lg border border-border bg-surface px-3 py-2 text-text focus:outline-2 focus:outline-brand-primary";
+  campoDS.control;
 
 export default function AuthForm({ mode }: Props) {
   const router = useRouter();
@@ -131,7 +132,7 @@ export default function AuthForm({ mode }: Props) {
       <button
         type="submit"
         disabled={loading}
-        className="min-h-11 w-full rounded-lg bg-brand-primary px-4 py-2 font-medium text-brand-on-primary disabled:opacity-60"
+        className={`${botonDS.principal}`}
       >
         {loading ? "Un momento…" : mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
       </button>

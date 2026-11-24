@@ -97,7 +97,7 @@ export default function InterruptorNotificaciones({ t }: { t: TextosCuenta }) {
   return (
     <div className="flex flex-col gap-espacio-s">
       <div className="flex flex-wrap items-center justify-between gap-espacio-m">
-        <h2 id="notificaciones" className="text-xl font-semibold leading-7">
+        <h2 id="notificaciones" className="text-tarjeta leading-7">
           {t.notifTitulo}
         </h2>
         <button
@@ -108,7 +108,7 @@ export default function InterruptorNotificaciones({ t }: { t: TextosCuenta }) {
           aria-describedby="notificaciones-estado"
           disabled={!sePuedeCambiar || cambiando}
           onClick={alternar}
-          className="relative inline-flex h-8 w-14 shrink-0 items-center rounded-full border-2 border-text bg-surface transition-colors disabled:opacity-60 aria-checked:bg-text focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-foco-anillo"
+          className="relative inline-flex h-8 w-14 shrink-0 items-center rounded-full border-2 border-text bg-surface transition-colors disabled:opacity-60 aria-checked:border-brand-primary aria-checked:bg-brand-primary focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-foco-anillo"
         >
           <span
             aria-hidden="true"

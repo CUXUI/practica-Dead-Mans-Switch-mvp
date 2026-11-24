@@ -553,7 +553,7 @@ export default function ConfigurarAviso({
       {cabecera}
       <Tarjeta>
         {!hayAceptado && <Badge>{t.resumen.esperando}</Badge>}
-        <p className="text-lg font-semibold">{t.resumen.apagado}</p>
+        <p className="text-bloque">{t.resumen.apagado}</p>
         {!hayAceptado && (
           <p className="text-text-muted">
             {t.resumen.podras}{" "}

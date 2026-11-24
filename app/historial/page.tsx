@@ -25,10 +25,10 @@ export default async function Historial() {
   return (
     <Pantalla nav={<BarraNavegacion t={textosInicio(marca.variant).nav} actual="historial" />}>
       <Encabezado nombre={marca.name} />
-      <h1 className="text-2xl font-bold leading-8">{t.titulo}</h1>
+      <h1 className="text-seccion leading-8">{t.titulo}</h1>
       {!resultado.ok ? (
         <section className={tarjeta}>
-          <h2 className="text-xl font-semibold leading-7">{t.errorTitulo}</h2>
+          <h2 className="text-tarjeta leading-7">{t.errorTitulo}</h2>
           <p className="text-text-muted">{t.errorTexto}</p>
           <Link href="/historial" className={boton.secundario}>
             {t.reintentar}

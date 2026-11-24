@@ -82,7 +82,7 @@ export function ComoFunciona() {
                   <Icono className="size-7" />
                 </span>
                 <div>
-                  <h3 className="text-xl font-semibold leading-7">{paso.titulo}</h3>
+                  <h3 className="text-tarjeta leading-7">{paso.titulo}</h3>
                   <p className="mt-1 text-text-muted">
                     {resaltar(paso.detalle, "destacado" in paso ? paso.destacado : undefined)}
                   </p>

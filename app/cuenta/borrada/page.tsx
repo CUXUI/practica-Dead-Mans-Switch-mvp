@@ -19,7 +19,7 @@ export default function CuentaBorrada() {
         </Link>
       }
     >
-      <h1 className="text-2xl font-bold leading-8">{t.borradaTitulo}</h1>
+      <h1 className="text-seccion leading-8">{t.borradaTitulo}</h1>
       <p className="text-base leading-6 text-text-muted">{t.borradaTexto}</p>
     </Pantalla>
   );

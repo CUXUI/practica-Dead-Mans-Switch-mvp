@@ -286,7 +286,7 @@ export default function ControlAviso({
       aria-checked={encendido}
       disabled={ocupado}
       onClick={alternar}
-      className="relative inline-flex h-8 w-14 shrink-0 items-center rounded-full border-2 border-text bg-surface transition-colors disabled:opacity-60 aria-checked:bg-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
+      className="relative inline-flex h-8 w-14 shrink-0 items-center rounded-full border-2 border-text bg-surface transition-colors disabled:opacity-60 aria-checked:border-brand-primary aria-checked:bg-brand-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
     >
       <span aria-hidden="true" className={`size-5 rounded-full transition-transform ${encendido ? "translate-x-7 bg-surface" : "translate-x-1 bg-text"}`} />
       <span className="sr-only">{etiqueta}</span>
@@ -297,7 +297,7 @@ export default function ControlAviso({
     <div className={titulo ? "space-y-5" : "space-y-3"}>
       {titulo && (
         <div className="flex items-center justify-between gap-3">
-          <h2 className="text-lg font-semibold">{titulo}</h2>
+          <h2 className="text-bloque">{titulo}</h2>
           {!dialogo && interruptor}
         </div>
       )}
@@ -372,11 +372,13 @@ export default function ControlAviso({
           {ventana ? (
             <div id="no-se-puede-apagar" className="space-y-1 rounded-lg bg-surface-muted p-3">
               <p className="font-semibold">{enGracia ? t.graciaTitulo : cercaHora ? t.noSePuedeTitulo : t.confirmarTitulo}</p>
-              <p className="text-sm text-text-muted">{enGracia
+              {/* La hora termina en "a. m." / "p. m.": si la frase también cierra con punto, queda uno solo. */}
+              <p className="text-sm text-text-muted">{(enGracia
                   ? rellenar(t.graciaTexto, { hasta: horaDe(new Date(new Date(fireAt).getTime() + graciaMin * 60_000)) })
                   : cercaHora
                     ? rellenar(t.noSePuedeTexto, { hasta: horaDe(new Date(fireAt)) })
-                    : rellenar(t.confirmarTexto, { hasta: horaDe(new Date(new Date(fireAt).getTime() + graciaMin * 60_000)) })}</p>
+                    : rellenar(t.confirmarTexto, { hasta: horaDe(new Date(new Date(fireAt).getTime() + graciaMin * 60_000)) })
+                ).replace(/\.\.$/, ".")}</p>
               {/* Nunca "confirmado" sin servidor: si no llegó, se dice y se reintenta solo. */}
               <p role="alert" className="text-sm font-medium text-danger empty:hidden">
                 {espera === "red" ? t.confirmar.sinRed : espera === "pronto" ? t.confirmar.reintentando : (errorConfirmar ?? "")}

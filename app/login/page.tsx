@@ -6,7 +6,7 @@ export default function LoginPage() {
   const brand = getBrand();
   return (
     <main className="mx-auto max-w-md p-6">
-      <h1 className="mb-1 text-2xl font-semibold">{brand.name}</h1>
+      <h1 className="mb-1 text-seccion">{brand.name}</h1>
       <p className="mb-6 text-text-muted">Inicia sesión para continuar.</p>
       <AuthForm mode="login" />
       <p className="mt-4 text-sm">

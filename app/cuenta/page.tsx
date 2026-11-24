@@ -38,10 +38,10 @@ export default async function Cuenta() {
   return (
     <Pantalla nav={<BarraNavegacion t={textosInicio(marca.variant).nav} actual="ajustes" />}>
       <Encabezado nombre={marca.name} />
-      <h1 className="text-2xl font-bold leading-8">{t.titulo}</h1>
+      <h1 className="text-seccion leading-8">{t.titulo}</h1>
 
       <section aria-labelledby="datos" className={tarjeta}>
-        <h2 id="datos" className="text-xl font-semibold leading-7">
+        <h2 id="datos" className="text-tarjeta leading-7">
           {t.datos}
         </h2>
         <dl className="flex flex-col">
@@ -60,7 +60,7 @@ export default async function Cuenta() {
       </section>
 
       <section aria-labelledby="eliminar" className={tarjeta}>
-        <h2 id="eliminar" className="text-xl font-semibold leading-7">
+        <h2 id="eliminar" className="text-tarjeta leading-7">
           {t.borrarTitulo}
         </h2>
         <p className="text-base leading-6 text-text-muted">{t.borrarTexto}</p>

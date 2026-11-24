@@ -29,11 +29,12 @@ Web app (PWA) de **marca blanca** para que una persona que vive o sale sola avis
 
 ```
 /app            Páginas y rutas (App Router). /app/api = endpoints
-/components     Componentes de UI reutilizables
+/components     Componentes de UI. /components/ds = design system (reutilizable por todos los flujos)
+/tokens         tokens.json (espejo de las variables de Figma) y el script que genera el CSS
 /lib            Utilidades, clientes (supabase, resend, qstash), tipos de dominio
 /supabase/migrations   Cambios de esquema (solo los hace el núcleo)
 /public         Iconos PWA, manifest, service worker
-/docs           PRD, FLUJOS.md
+/docs           PRD, FLUJOS.md, DESIGN_SYSTEM.md
 ```
 
 - Cada flujo trabaja en su carpeta: `/app/<flujo>/` y `/components/<flujo>/`. **No tocar carpetas de otro flujo.**
@@ -73,13 +74,17 @@ Estados de la alerta para quien recibe: `enviada` · `alguien la vio` · `sin re
 
 ## 5. Design system
 
-> Completar con los tokens reales del equipo de diseño. Hasta entonces, no inventar colores nuevos: usar solo los tokens definidos en `tailwind.config`.
+Documentación viva: **`/design-system`** (dentro de la app). Diseño: archivo de Figma «Diseño base (DS - marca blanca)». Guía corta: `docs/DESIGN_SYSTEM.md`.
 
-- Colores por **nombre semántico** (`brand-primary`, `brand-onPrimary`, `surface`, `text`, `danger`, `success`), nunca hex sueltos en componentes.
-- La marca (nombre, ícono, colores) se carga por versión (Cerca / Montaña). Si un color de marca no cumple contraste, se usa el del núcleo.
-- **Accesibilidad obligatoria:** contraste mínimo **4,5:1** en texto y **3:1** en controles; áreas táctiles de al menos 44×44 px; todo operable con lector de pantalla.
+- **Tokens:** `tokens/tokens.json` es el espejo de las variables de Figma (mismos nombres). `npm run tokens` genera `app/tokens.css` y `lib/ds/tokens.ts`. **No editar los generados a mano** ni escribir hex o medidas sueltas en componentes.
+- **Componentes:** viven en `components/ds/`. Antes de crear una pieza de interfaz, buscá si ya existe ahí. Las recetas de clases (botón, campo, tarjeta, badge, enlace, foco) están en `components/ds/estilos.ts`: los flujos las importan, no las copian.
+- **Colores por nombre semántico**: los de Figma (`accion-principal`, `fondo-superficie`, `borde-sutil`, `text-secundario`…) o sus alias (`brand-primary`, `brand-on-primary`, `surface`, `surface-muted`, `text`, `text-muted`, `border`, `danger`, `success`).
+- **Marca blanca = tema.** El único color que cambia entre marcas es `accion/principal`. El tema se elige con `NEXT_PUBLIC_TEMA` (`base` | `cerca` | `montana`); sin variable sale Base (grises). Para demos: `?tema=montana` en cualquier pantalla. Si un color de marca no cumple contraste, se usa el de Base.
+- **Los estados no dependen del color**: error, aviso y éxito llevan ícono y palabra. No cambian de nombre ni de aspecto entre marcas.
+- **Accesibilidad obligatoria:** contraste mínimo **4,5:1** en texto y **3:1** en controles; áreas táctiles de al menos 48×48 px; foco visible de 3 px; todo operable con teclado y lector de pantalla; animaciones apagadas con `prefers-reduced-motion`.
 - **Tono de los textos:** informa y acompaña. **Nunca** usar "emergencia", "peligro" ni "muerte". Se dice "sin respuesta confirmada" y se nombran causas posibles (señal, batería, silencio). El cierre de una alerta nunca celebra.
 - Textos de interfaz en español, tuteo neutro. Los textos viven en un archivo por versión (no escribirlos fijos dentro de los componentes).
+- Si cambiás un componente del sistema, actualizá su ficha en `app/design-system/componentes/page.tsx` y su fila en `app/design-system/_datos/cobertura.ts`.
 
 ## 6. Reglas de código
 

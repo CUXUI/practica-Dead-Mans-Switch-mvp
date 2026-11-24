@@ -28,12 +28,12 @@ export default function InicioAlerta({
       <main className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4">
         <SincronizarNotificaciones />
         <Encabezado nombre={app} />
-        <h1 className="text-2xl font-semibold">{nombre ? rellenar(t.hola, { nombre }) : t.holaSinNombre}</h1>
+        <h1 className="text-seccion">{nombre ? rellenar(t.hola, { nombre }) : t.holaSinNombre}</h1>
         <Tarjeta>
           <div>
             <Badge>{t.alertaBadge}</Badge>
           </div>
-          <h2 className="text-lg font-semibold">{textos.alertaTitulo}</h2>
+          <h2 className="text-bloque">{textos.alertaTitulo}</h2>
           <p className="text-text-muted">{textos.alertaCuerpo}</p>
           <CancelarAlerta textos={textos} plazo={plazo} />
         </Tarjeta>

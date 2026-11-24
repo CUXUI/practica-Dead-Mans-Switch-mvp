@@ -26,7 +26,7 @@ export default async function RegistroAltaPage() {
         >
           <IconoVolver className="size-6" />
         </Link>
-        <h1 className="text-xl font-semibold">{textos.titulo}</h1>
+        <h1 className="text-tarjeta">{textos.titulo}</h1>
       </header>
       <RegistroForm textos={textos} />
       <p className="mt-6 text-sm">

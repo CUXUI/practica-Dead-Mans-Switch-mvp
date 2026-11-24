@@ -117,7 +117,7 @@ export default function AceptarContacto({
             </ul>
             <p className="text-sm text-text-muted">{t.notaSinConfirmar}</p>
           </Caja>
-          <h2 className="text-lg font-semibold">{t.dudasTitulo}</h2>
+          <h2 className="text-bloque">{t.dudasTitulo}</h2>
           {t.dudas(emisor).map((d, i) => (
             <Desplegable
               key={d.pregunta}

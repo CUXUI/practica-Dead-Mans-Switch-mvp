@@ -1,3 +1,4 @@
+import { boton as botonDS } from "@/components/ds/estilos";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -20,17 +21,17 @@ export default async function InicioAltaPage() {
       <Cabecera />
       <h1 className="text-3xl font-bold leading-tight">{textos.titulo}</h1>
       <p className="mt-4 text-text-muted">{textos.cuerpo}</p>
-      <h2 className="mt-8 text-lg font-semibold">{textos.pregunta}</h2>
+      <h2 className="mt-8 text-bloque">{textos.pregunta}</h2>
       <div className="mt-3 space-y-3">
         <Link
           href="/login"
-          className="flex min-h-12 w-full items-center justify-center rounded-lg border border-border bg-surface px-4 py-2 font-semibold"
+          className={`${botonDS.secundario}`}
         >
           {textos.siIniciarSesion}
         </Link>
         <Link
           href="/alta/registro"
-          className="flex min-h-12 w-full items-center justify-center rounded-lg bg-brand-primary px-4 py-2 font-semibold text-brand-on-primary"
+          className={`${botonDS.principal}`}
         >
           {textos.noCrearCuenta}
         </Link>

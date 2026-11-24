@@ -1,3 +1,4 @@
+import { boton as botonDS } from "@/components/ds/estilos";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -30,7 +31,7 @@ export default async function ListoPage() {
               {i + 1}
             </span>
             <div>
-              <p className="text-lg font-semibold">{p.titulo}</p>
+              <p className="text-bloque">{p.titulo}</p>
               <p className="text-sm text-text-muted">{p.detalle}</p>
             </div>
           </li>
@@ -39,7 +40,7 @@ export default async function ListoPage() {
       <div className="mt-auto pt-8">
         <Link
           href="/alta/notificaciones"
-          className="flex min-h-12 w-full items-center justify-center rounded-lg bg-brand-primary px-4 py-2 font-semibold text-brand-on-primary"
+          className={`${botonDS.principal}`}
         >
           {textos.empezar}
         </Link>

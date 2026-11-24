@@ -114,7 +114,7 @@ export default function ListaContactos({
       ) : (
         <>
           <Encabezado nombre={app} />
-          <h1 className="pt-2 text-2xl font-semibold">{t.tituloPantalla}</h1>
+          <h1 className="pt-2 text-seccion">{t.tituloPantalla}</h1>
         </>
       )}
 

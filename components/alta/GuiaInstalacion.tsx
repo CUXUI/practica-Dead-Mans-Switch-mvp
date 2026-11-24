@@ -1,5 +1,6 @@
 "use client";
 
+import { boton as botonDS } from "@/components/ds/estilos";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { TextosAlta } from "@/components/alta/textos";
@@ -72,7 +73,7 @@ export default function GuiaInstalacion({ textos }: { textos: TextosAlta["instal
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold leading-tight">{textos.titulo}</h1>
+        <h1 className="text-seccion leading-tight">{textos.titulo}</h1>
         <p className="mt-2 text-text-muted">{textos.cuerpo}</p>
       </div>
 
@@ -90,7 +91,7 @@ export default function GuiaInstalacion({ textos }: { textos: TextosAlta["instal
         <button
           type="button"
           onClick={instalar}
-          className="min-h-12 w-full rounded-lg bg-brand-primary px-4 py-2 font-semibold text-brand-on-primary"
+          className={`${botonDS.principal}`}
         >
           {textos.androidBoton}
         </button>
@@ -103,7 +104,7 @@ export default function GuiaInstalacion({ textos }: { textos: TextosAlta["instal
       <button
         type="button"
         onClick={() => router.push(SIGUIENTE)}
-        className="min-h-12 w-full rounded-lg border border-border bg-surface px-4 py-2 font-semibold"
+        className={`${botonDS.secundario}`}
       >
         {textos.continuar}
       </button>

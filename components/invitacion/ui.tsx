@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 import type { TextosInvitacion } from "./textos";
+import { boton as botonDS, card, FOCO } from "@/components/ds/estilos";
 
 // Piezas del flujo de invitación. Solo tokens semánticos de Tailwind (AGENTS.md sección 5).
 
@@ -11,15 +12,8 @@ export function Boton({
   children,
   ...rest
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variante?: "primario" | "secundario" }) {
-  const estilo =
-    variante === "primario"
-      ? "bg-brand-primary text-brand-on-primary"
-      : "border border-border bg-surface text-text";
   return (
-    <button
-      className={`min-h-12 w-full rounded-lg px-4 py-2 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary disabled:opacity-60 ${estilo} ${className}`}
-      {...rest}
-    >
+    <button className={`${variante === "primario" ? botonDS.principal : botonDS.secundario} ${className}`} {...rest}>
       {children}
     </button>
   );
@@ -27,8 +21,8 @@ export function Boton({
 
 export function Caja({ titulo, children }: { titulo?: string; children: ReactNode }) {
   return (
-    <section aria-label={titulo} className="space-y-3 rounded-lg border border-border bg-surface p-4">
-      {titulo && <h2 className="text-lg font-semibold">{titulo}</h2>}
+    <section aria-label={titulo} className={`${card("contorno")} px-espacio-l`}>
+      {titulo && <h2 className="text-bloque">{titulo}</h2>}
       {children}
     </section>
   );
@@ -49,14 +43,14 @@ export function Desplegable({
   children: ReactNode;
 }) {
   return (
-    <div className="rounded-lg border border-border bg-surface">
+    <div className="rounded-radio-m border border-borde-sutil bg-surface">
       <button
         type="button"
         id={`${id}-boton`}
         aria-expanded={abierto}
         aria-controls={`${id}-panel`}
         onClick={onToggle}
-        className="flex min-h-12 w-full items-center gap-3 px-4 py-2 text-left font-medium focus-visible:outline-2 focus-visible:outline-brand-primary"
+        className={`flex min-h-12 w-full items-center gap-3 px-4 py-2 text-left font-semibold rounded-radio-m ${FOCO}`}
       >
         <span aria-hidden="true" className="w-4 text-center font-bold">
           {abierto ? "\u2212" : "+"}
@@ -73,7 +67,7 @@ export function Desplegable({
 export function Aviso({ tono = "info", children }: { tono?: "info" | "error"; children: ReactNode }) {
   const estilo = tono === "error" ? "border-danger text-danger" : "border-border";
   return (
-    <p role={tono === "error" ? "alert" : "status"} className={`rounded-lg border bg-surface p-3 ${estilo}`}>
+    <p role={tono === "error" ? "alert" : "status"} className={`rounded-radio-m border bg-surface p-3 ${estilo}`}>
       {children}
     </p>
   );
@@ -96,7 +90,7 @@ export function Marco({
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col gap-4 p-6">
       <p className="font-bold">{marca}</p>
-      <h1 ref={tituloRef} tabIndex={-1} className="text-2xl font-semibold focus:outline-none">
+      <h1 ref={tituloRef} tabIndex={-1} className="text-seccion focus:outline-none">
         {titulo}
       </h1>
       <div className="flex flex-1 flex-col gap-4">{children}</div>

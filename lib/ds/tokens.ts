@@ -1,0 +1,287 @@
+// GENERADO por tokens/generar.mjs a partir de tokens/tokens.json. No editar a mano.
+export const TOKENS = {
+  "$descripcion": "Tokens del design system de marca blanca. Espejo 1:1 de las variables de Figma (archivo «Diseño base (DS - marca blanca)»). Los nombres son los mismos que en Figma: si cambia una variable allí, se cambia aquí y se corre `npm run tokens`.",
+  "$figma": "https://www.figma.com/design/SivWKbg1aOefpcFusEFfOZ/?node-id=2018-57",
+  "temas": {
+    "base": {
+      "nombre": "Base",
+      "modoFigma": "Color - Base grises",
+      "descripcion": "Escala de grises. Es el tema por defecto y el punto de partida de cualquier marca."
+    },
+    "cerca": {
+      "nombre": "Cerca",
+      "modoFigma": "Color - Cerca",
+      "descripcion": "Versión para quien vive sola."
+    },
+    "montana": {
+      "nombre": "Montaña",
+      "modoFigma": "Color - Montana",
+      "descripcion": "Versión para quien sale sola."
+    }
+  },
+  "color": {
+    "fondo/lienzo": {
+      "valor": "#f7f7f7",
+      "uso": "Fondo general de cada pantalla"
+    },
+    "fondo/superficie": {
+      "valor": "#ffffff",
+      "uso": "Tarjetas, formularios y paneles"
+    },
+    "fondo/sutil": {
+      "valor": "#f0f0f0",
+      "uso": "Agrupar contenido sin indicar estado"
+    },
+    "fondo/inverso": {
+      "valor": "#262626",
+      "uso": "Zonas oscuras con texto inverso"
+    },
+    "texto/principal": {
+      "valor": "#1f1f1f",
+      "uso": "Títulos, instrucciones y contenido esencial"
+    },
+    "texto/secundario": {
+      "valor": "#555555",
+      "uso": "Información complementaria, no alertas críticas"
+    },
+    "texto/inverso": {
+      "valor": "#ffffff",
+      "uso": "Texto sobre fondos oscuros"
+    },
+    "texto/sobre-desactivada": {
+      "valor": "#3f3f3f",
+      "uso": "Texto de control desactivado con explicación"
+    },
+    "accion/principal": {
+      "valor": {
+        "base": "#262626",
+        "cerca": "#b2102e",
+        "montana": "#1c7c70"
+      },
+      "uso": "Botón de la acción principal. Es el único color que cambia entre marcas."
+    },
+    "accion/principal-pulsada": {
+      "valor": "#0d0d0d",
+      "uso": "Estado pulsado de la acción principal"
+    },
+    "accion/desactivada": {
+      "valor": "#d1d1d1",
+      "uso": "Fondo del control no disponible"
+    },
+    "borde/control": {
+      "valor": "#767676",
+      "uso": "Campos, botones secundarios y controles"
+    },
+    "borde/sutil": {
+      "valor": "#d1d1d1",
+      "uso": "Separadores decorativos, no controles"
+    },
+    "foco/anillo": {
+      "valor": "#3f3f3f",
+      "uso": "Foco de teclado de 3 px separado 2 px"
+    },
+    "estado/aviso/fondo": {
+      "valor": "#e8e8e8",
+      "uso": "Aviso con palabra e icono"
+    },
+    "estado/error/fondo": {
+      "valor": "#e1e1e1",
+      "uso": "Error con palabra e icono"
+    },
+    "estado/exito/fondo": {
+      "valor": "#f0f0f0",
+      "uso": "Confirmación con palabra e icono"
+    },
+    "estado/texto": {
+      "valor": "#262626",
+      "uso": "Texto e icono de estados"
+    }
+  },
+  "colorPrimitivo": {
+    "negro": {
+      "valor": "#000000",
+      "uso": "Negro puro. Base para fondos de overlays (scrim) y sombras."
+    },
+    "gris/100": {
+      "valor": "#f5f5f5",
+      "uso": "Primitivo"
+    },
+    "gris/200": {
+      "valor": "#e5e5e5",
+      "uso": "Primitivo"
+    },
+    "gris/900": {
+      "valor": "#171717",
+      "uso": "Primitivo"
+    }
+  },
+  "colorExtension": {
+    "$nota": "Existen en el código del producto y todavía no en Figma. Se documentan aquí para que nadie escriba el hex suelto.",
+    "estado/error/texto": {
+      "valor": "#b3261e",
+      "uso": "Texto y borde de un error en formularios. Siempre va con ícono y palabra."
+    },
+    "estado/exito/texto": {
+      "valor": "#1b6e3c",
+      "uso": "Texto de una confirmación. Siempre va con ícono y palabra."
+    }
+  },
+  "espacio": {
+    "espacio/xs": {
+      "valor": 4,
+      "uso": "Icono junto a texto muy relacionado"
+    },
+    "espacio/s": {
+      "valor": 8,
+      "uso": "Etiqueta y campo"
+    },
+    "espacio/m": {
+      "valor": 12,
+      "uso": "Elementos de un mismo bloque"
+    },
+    "espacio/l": {
+      "valor": 16,
+      "uso": "Padding interno de controles"
+    },
+    "espacio/xl": {
+      "valor": 24,
+      "uso": "Separación entre bloques"
+    },
+    "espacio/2xl": {
+      "valor": 32,
+      "uso": "Padding de tarjeta y separación de grupos"
+    },
+    "espacio/seccion": {
+      "valor": 48,
+      "uso": "Separación entre secciones"
+    }
+  },
+  "tamano": {
+    "tamano/control-minimo": {
+      "valor": 48,
+      "uso": "Alto mínimo de botones y campos"
+    },
+    "tamano/icono": {
+      "valor": 24,
+      "uso": "Iconos de acción y estado"
+    },
+    "tamano/icono-s": {
+      "valor": 20,
+      "uso": "Ícono pequeño junto a texto 14/21"
+    },
+    "tamano/logo": {
+      "valor": 32,
+      "uso": "Lado del logo dentro de la Marca de la app"
+    },
+    "tamano/caja-hora": {
+      "valor": 72,
+      "uso": "Alto de la Caja de hora del Selector de hora"
+    }
+  },
+  "radio": {
+    "radio/s": {
+      "valor": 8,
+      "uso": "Controles pequeños"
+    },
+    "radio/m": {
+      "valor": 12,
+      "uso": "Botones y campos"
+    },
+    "radio/l": {
+      "valor": 16,
+      "uso": "Tarjetas y paneles"
+    },
+    "radio/pill": {
+      "valor": 999,
+      "uso": "Etiquetas tipo píldora"
+    }
+  },
+  "tipografia": {
+    "familia": "Inter",
+    "pesos": {
+      "regular": 400,
+      "semibold": 600,
+      "bold": 700
+    },
+    "estilos": {
+      "Título/Pantalla": {
+        "clase": "pantalla",
+        "tamano": 28,
+        "interlinea": 36,
+        "peso": 700,
+        "uso": "Título principal de pantalla (h1)"
+      },
+      "Título/Sección": {
+        "clase": "seccion",
+        "tamano": 24,
+        "interlinea": 32,
+        "peso": 700,
+        "uso": "Título de sección y saludo"
+      },
+      "Título/Tarjeta": {
+        "clase": "tarjeta",
+        "tamano": 20,
+        "interlinea": 28,
+        "peso": 600,
+        "uso": "Título de tarjeta y de diálogo"
+      },
+      "Título/Bloque": {
+        "clase": "bloque",
+        "tamano": 18,
+        "interlinea": 28,
+        "peso": 600,
+        "uso": "Título de un bloque dentro de una pantalla"
+      },
+      "Etiqueta": {
+        "clase": "etiqueta",
+        "tamano": 16,
+        "interlinea": 24,
+        "peso": 600,
+        "uso": "Etiquetas de campo y filas"
+      },
+      "Botón": {
+        "clase": "boton",
+        "tamano": 16,
+        "interlinea": 24,
+        "peso": 700,
+        "uso": "Texto de los botones"
+      },
+      "Cuerpo": {
+        "clase": "cuerpo",
+        "tamano": 16,
+        "interlinea": 24,
+        "peso": 400,
+        "uso": "Instrucciones y alertas"
+      },
+      "Cuerpo/Pequeño": {
+        "clase": "pequeno",
+        "tamano": 14,
+        "interlinea": 21,
+        "peso": 400,
+        "uso": "Metadatos no críticos"
+      }
+    }
+  },
+  "movimiento": {
+    "$nota": "Extensión en código. En Figma la animación vive en los prototipos (Smart animate 0,25 s).",
+    "duracion/rapida": {
+      "valor": "120ms",
+      "uso": "Cambios de color al pasar o presionar"
+    },
+    "duracion/media": {
+      "valor": "250ms",
+      "uso": "Cambio de destino en la barra de navegación, interruptor, entradas"
+    },
+    "duracion/lenta": {
+      "valor": "450ms",
+      "uso": "Confirmaciones (doble check)"
+    },
+    "curva/estandar": {
+      "valor": "cubic-bezier(0.2, 0, 0, 1)",
+      "uso": "Curva por defecto"
+    }
+  }
+} as const;
+
+export type Tema = "base" | "cerca" | "montana";
+export const TEMAS: readonly Tema[] = ["base","cerca","montana"];
