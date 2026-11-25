@@ -76,7 +76,7 @@ export default function ConfigurarAviso({
   const esOtro = !limites.graciaOpciones.includes(inicial.graciaMin);
   const [graciaOtro, setGraciaOtro] = useState(esOtro);
   const [gracia, setGraciaLibre] = useState(inicial.graciaMin);
-  // Nunca fuera de 15 min – 24 h: el selector no deja elegir un valor que luego dé error.
+  // Nunca fuera del rango permitido (CONFIG_EMISOR.gracia): el selector no deja elegir un valor que luego dé error.
   const setGracia = (min: number) => setGraciaLibre(Math.min(limites.graciaMax, Math.max(limites.graciaMin, min)));
   // Tras mover un contacto, el foco sigue a ese contacto (la flecha pulsada puede desaparecer).
   const [focoTras, setFocoTras] = useState<{ id: string; arriba: boolean } | null>(null);
@@ -115,13 +115,15 @@ export default function ConfigurarAviso({
     setFocoTras(null);
   }, [focoTras]);
 
-  // Minutos que se pueden elegir para las horas ya elegidas: sin "0" si con 0 horas quedaría por debajo del
-  // mínimo (15 min), y sin 15, 30 ni 45 si ya se llegó al máximo (24 h). Así no hay opciones que no funcionan.
-  // Minuto a minuto (0 a 59), para poder elegir tiempos cortos como 2 min en una demo.
-  const minutosPosibles = Array.from({ length: 60 }, (_, m) => m).filter((m) => {
-    const total = Math.floor(gracia / 60) * 60 + m;
-    return total >= limites.graciaMin && total <= limites.graciaMax;
-  });
+  // Solo estas opciones de minutos. Se filtran por el rango permitido para las horas elegidas.
+  // Si el minuto actual no está en la lista (p. ej. 0 con 1 h), se incluye para que el selector no muestre otro valor.
+  const MINUTOS_OPCIONES = [2, 15, 30, 45];
+  const minutosPosibles = [...MINUTOS_OPCIONES, 0]
+    .filter((m) => {
+      const total = Math.floor(gracia / 60) * 60 + m;
+      return total >= limites.graciaMin && total <= limites.graciaMax && (MINUTOS_OPCIONES.includes(m) || m === gracia % 60);
+    })
+    .sort((a, b) => a - b);
 
   const porId = new Map(opciones.map((c) => [c.id, c]));
   const elegidos = enAviso.map((id) => porId.get(id)).filter((c): c is ContactoOpcion => !!c);
