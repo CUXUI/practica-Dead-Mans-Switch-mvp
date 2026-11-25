@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description: brand.description,
   applicationName: brand.name,
   appleWebApp: { capable: true, title: brand.name, statusBarStyle: "default" },
-  icons: { apple: "/icons/icon-192.png" },
+  icons: { icon: "/icons/app-icon.svg", apple: "/icons/icon-192.png" },
 };
 
 export const viewport: Viewport = {

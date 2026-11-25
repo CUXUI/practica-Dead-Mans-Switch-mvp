@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import BotonEnlace from "./BotonEnlace";
 
@@ -33,15 +34,13 @@ export function Pantalla({ children, pie, nav }: { children: React.ReactNode; pi
   );
 }
 
-// Encabezado de la app (Biblioteca, "Encabezado"): logo y nombre de la marca, con línea inferior.
-// Va arriba en las pantallas con menú (Inicio, Contactos, Historial, Ajustes). Logo de ejemplo (marca blanca).
+// Encabezado de la app (Biblioteca, "Encabezado"): logo de la marca, con línea inferior.
+// Va arriba en las pantallas con menú (Inicio, Contactos, Historial, Ajustes).
+// Logo oscuro (contraste sobre blanco). El nombre queda para lectores de pantalla.
 export function Encabezado({ nombre }: { nombre: string }) {
   return (
-    <header className="-mx-4 -mt-4 flex items-center gap-2 border-b border-border/40 bg-surface px-4 py-3">
-      <span aria-hidden="true" className="inline-flex size-8 items-center justify-center rounded-full bg-brand-primary text-sm font-semibold text-brand-on-primary">
-        {nombre.slice(0, 1)}
-      </span>
-      <p className="font-semibold">{nombre}</p>
+    <header className="-mx-4 -mt-4 flex items-center border-b border-border/40 bg-surface px-4 py-3">
+      <Image src="/icons/logo.svg" alt={nombre} width={99} height={28} unoptimized priority />
     </header>
   );
 }
