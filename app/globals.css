@@ -52,6 +52,25 @@ button:disabled,
   box-shadow: 0 0 0 2px var(--color-fondo-superficie);
 }
 
+/* Color de marca elegido en Ajustes (cookie marca_color, ver lib/marca-color.ts).
+   Sin clase = Base. Cada marca reemplaza los tokens de acción; los alias de arriba se redefinen aquí
+   porque var() se resuelve donde se declara y un cambio en un hijo no llegaría a ellos. */
+.marca-cerca {
+  --color-accion-principal: var(--color-cerca-principal);
+  --color-accion-principal-pulsada: var(--color-cerca-principal-pulsada);
+  --color-foco-anillo: var(--color-cerca-foco);
+  --color-brand-primary: var(--color-cerca-principal);
+  --color-brand-on-primary: var(--color-cerca-sobre-principal);
+}
+
+.marca-montana {
+  --color-accion-principal: var(--color-montana-principal);
+  --color-accion-principal-pulsada: var(--color-montana-principal-pulsada);
+  --color-foco-anillo: var(--color-montana-foco);
+  --color-brand-primary: var(--color-montana-principal);
+  --color-brand-on-primary: var(--color-montana-sobre-principal);
+}
+
 body {
   background: var(--color-surface-muted);
   color: var(--color-text);

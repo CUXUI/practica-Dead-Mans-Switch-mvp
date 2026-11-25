@@ -11,6 +11,14 @@ const COMUNES = {
   correo: "Correo",
   sinDato: "Sin completar",
   cerrarSesion: "Cerrar sesión",
+  // Color de la app (Ajustes). Solo cambia los colores; el nombre de la app no cambia.
+  colorTitulo: "Marca",
+  colorTexto: "Elige el color de botones y acentos. Se aplica solo en este dispositivo.",
+  colorBase: "Base",
+  colorCerca: "Cerca",
+  colorMontana: "Montaña",
+  colorAplicar: "Aplicar",
+  colorAplicado: "Color aplicado.",
   // Notificaciones de este dispositivo. El interruptor solo afecta a este dispositivo.
   notifTitulo: "Notificaciones",
   notifEtiqueta: "Notificaciones en este dispositivo",

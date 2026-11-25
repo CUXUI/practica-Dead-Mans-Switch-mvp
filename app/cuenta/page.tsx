@@ -1,5 +1,8 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { getBrand } from "@/lib/brand";
+import { COOKIE_MARCA_COLOR, leerMarcaColor } from "@/lib/marca-color";
+import SelectorMarca from "@/components/cuenta/SelectorMarca";
 import { Encabezado, Pantalla } from "@/components/emisor/ui";
 import BarraNavegacion from "@/components/home/BarraNavegacion";
 import { textosInicio } from "@/components/home/textosInicio";
@@ -53,6 +56,10 @@ export default async function Cuenta() {
           ))}
         </dl>
         <CerrarSesion texto={t.cerrarSesion} />
+      </section>
+
+      <section aria-labelledby="color" className={tarjeta}>
+        <SelectorMarca t={t} inicial={leerMarcaColor((await cookies()).get(COOKIE_MARCA_COLOR)?.value)} />
       </section>
 
       <section aria-labelledby="notificaciones" className={tarjeta}>

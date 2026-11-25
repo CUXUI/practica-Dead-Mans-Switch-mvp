@@ -33,7 +33,7 @@ const COMUNES = {
     mensajeEjemplo: "Ejemplo: \"Estaré en casa de mi hermana\".",
     // Errores que el diseño no cubre (pendientes de revisar con diseño).
     errorDias: "Elige al menos un día.",
-    errorGracia: "Elige entre 15 min y 24 h.",
+    errorGracia: "Elige entre 2 min y 24 h.",
   },
   contactos: {
     titulo: "¿A quién avisamos?",

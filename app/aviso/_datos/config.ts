@@ -13,7 +13,7 @@ export const CONFIG_EMISOR = {
   // Tiempo de gracia (E4): botones fijos más "Otro" (hasta 24 h).
   gracia: {
     opciones: [15, 30, 60],
-    minimoMin: 15,
+    minimoMin: 2, // Temporal para la demo (2 min). Volver a 15 después de la demo.
     maximoMin: 24 * 60,
   },
 

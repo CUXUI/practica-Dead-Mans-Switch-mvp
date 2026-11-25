@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
+import { cookies } from "next/headers";
 import "./globals.css";
 import { getBrand } from "@/lib/brand";
+import { COOKIE_MARCA_COLOR, claseMarcaColor, leerMarcaColor } from "@/lib/marca-color";
 import PwaRegister from "@/components/pwa/PwaRegister";
 
 const brand = getBrand();
@@ -20,9 +22,12 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // El color de marca elegido en Ajustes viaja en una cookie: se aplica en el servidor, antes de pintar.
+  const almacen = await cookies();
+  const clase = claseMarcaColor(leerMarcaColor(almacen.get(COOKIE_MARCA_COLOR)?.value));
   return (
-    <html lang="es">
+    <html lang="es" className={clase || undefined}>
       <body className="min-h-dvh antialiased">
         <PwaRegister />
         {children}

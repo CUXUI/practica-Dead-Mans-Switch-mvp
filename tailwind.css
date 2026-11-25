@@ -37,6 +37,10 @@
   --spacing-radio-l: 16px;
   /* Etiquetas tipo píldora */
   --spacing-radio-pill: 999px;
+  /* Ancho y alto, y Espacio */
+  --spacing-foco-anillo-distancia: 2px;
+  --spacing-foco-anillo-grosor: 3px;
+  --spacing-borde-grosor-m: 2px;
   /* Cuerpo de texto */
   --spacing-peso-regular: 400px;
   /* Etiquetas y títulos de tarjeta */
@@ -63,6 +67,9 @@
   --spacing-interlinea-cuerpo: 24px;
   /* Interlínea de texto pequeño */
   --spacing-interlinea-pequeno: 21px;
+  --spacing-tamano-bloque: 18px;
+  --spacing-interlinea-bloque: 28px;
+  --spacing-borde-grosor-s: 1px;
   /* Ícono pequeño junto a texto 14/21 (Cuerpo/Pequeño), p. ej. el mensaje de error de Campo/Input. Cabe en el interlineado y no cambia el alto de la fila. Igual para todas las marcas, por eso vive en una colección de un solo modo. */
   --spacing-tamano-icono-s: 20px;
   /* Lado del logo dentro de la Marca de la app (encabezado). Igual para todas las marcas. */
@@ -70,45 +77,324 @@
   --spacing-tamano-caja-hora: 72px;
 
   /* Color */
-  /* Fondo general de cada pantalla */
-  --color-fondo-lienzo: oklch(97.61% 0 263.28);
-  /* Tarjetas, formularios y paneles */
-  --color-fondo-superficie: oklch(100% 0 263.28);
-  /* Agrupar contenido sin indicar estado */
-  --color-fondo-sutil: oklch(95.51% 0 263.28);
-  /* Zonas oscuras con texto inverso */
-  --color-fondo-inverso: oklch(26.86% 0 263.28);
-  /* Títulos, instrucciones y contenido esencial */
-  --text-color-principal: oklch(23.93% 0 263.28);
-  /* Información complementaria, no alertas críticas */
-  --text-color-secundario: oklch(44.95% 0 263.28);
-  /* Texto sobre fondos oscuros */
-  --text-color-inverso: oklch(100% 0 263.28);
-  /* Texto de control desactivado con explicación */
-  --text-color-sobre-desactivada: oklch(36.77% 0 263.28);
-  /* Botón de la acción principal */
-  --color-accion-principal: oklch(48.83% 0.189 20.51);
-  /* Estado pulsado de la acción principal */
-  --color-accion-principal-pulsada: oklch(15.91% 0 263.28);
-  /* Fondo del control no disponible */
-  --color-accion-desactivada: oklch(86.07% 0 263.28);
-  /* Campos, botones secundarios y controles */
-  --color-borde-control: oklch(56.58% 0 263.28);
-  /* Separadores decorativos, no controles */
-  --color-borde-sutil: oklch(86.07% 0 263.28);
-  /* Foco de teclado de 3 px separado 2 px */
-  --color-foco-anillo: oklch(36.77% 0 263.28);
-  /* Texto e icono de estados */
-  --text-color-estado-o: oklch(26.86% 0 263.28);
-  /* Aviso con palabra e icono */
-  --color-estado-aviso-fondo: oklch(93.1% 0 263.28);
-  /* Error con palabra e icono */
-  --color-estado-error-fondo: oklch(90.97% 0 263.28);
-  /* Confirmación con palabra e icono */
-  --color-estado-exito-fondo: oklch(95.51% 0 263.28);
   /* Negro puro. Base para fondos de overlays (scrim) y sombras. */
   --color-negro: oklch(0% 0 0);
+  --color-gris-50: oklch(98.51% 0 263.28);
   --color-gris-100: oklch(97.02% 0 263.28);
   --color-gris-200: oklch(92.19% 0 263.28);
+  --color-gris-300: oklch(86.99% 0 263.28);
+  --color-gris-400: oklch(71.55% 0 263.28);
+  --color-gris-500: oklch(55.55% 0 263.28);
+  --color-gris-600: oklch(43.86% 0 263.28);
+  --color-gris-700: oklch(37.15% 0 263.28);
+  --color-gris-800: oklch(26.86% 0 263.28);
   --color-gris-900: oklch(20.46% 0 263.28);
+  --color-gris-950: oklch(14.48% 0 263.28);
+  --color-ambar-290: oklch(85.05% 0.11 81.89);
+  --color-ambar-60: oklch(97.05% 0.029 82.6);
+  --color-ambar-680: oklch(54.25% 0.124 62.54);
+  --color-ambar-790: oklch(40.72% 0.092 64.42);
+  --color-azul-230: oklch(80.42% 0.074 251.23);
+  --color-azul-50: oklch(95.16% 0.018 253.39);
+  --color-azul-580: oklch(51.34% 0.16 255.68);
+  --color-azul-660: oklch(42.17% 0.157 259.92);
+  --color-gris-10: oklch(100% 0 263.28);
+  --color-gris-120: oklch(90.97% 0 263.28);
+  --color-gris-180: oklch(86.07% 0 263.28);
+  --color-gris-30: oklch(97.61% 0 263.28);
+  --color-gris-540: oklch(56.58% 0 263.28);
+  --color-gris-60: oklch(95.51% 0 263.28);
+  --color-gris-670: oklch(44.95% 0 263.28);
+  --color-gris-750: oklch(36.77% 0 263.28);
+  --color-gris-880: oklch(23.93% 0 263.28);
+  --color-gris-90: oklch(93.1% 0 263.28);
+  --color-rojo-200: oklch(80.04% 0.085 19.08);
+  --color-rojo-40: oklch(95.66% 0.018 17.25);
+  --color-rojo-530: oklch(53.86% 0.194 26.72);
+  --color-rojo-670: oklch(41.58% 0.146 26.29);
+  --color-verde-280: oklch(81.56% 0.084 146.82);
+  --color-verde-60: oklch(95.71% 0.021 147.84);
+  --color-verde-660: oklch(52.34% 0.135 144.19);
+  --color-verde-760: oklch(42.54% 0.116 144.33);
+  --color-montana-principal: oklch(53.01% 0.087 182.51);
+  --color-montana-principal-pulsada: oklch(42% 0.068 180.88);
+  --color-montana-sutil: oklch(96.81% 0.011 183.31);
+  --color-montana-foco: oklch(53.01% 0.087 182.51);
+  --color-base-principal: oklch(26.86% 0 263.28);
+  --color-base-principal-pulsada: oklch(15.91% 0 263.28);
+  --color-base-sutil: oklch(95.51% 0 263.28);
+  --color-base-foco: oklch(36.77% 0 263.28);
+  --color-base-sobre-principal: oklch(100% 0 263.28);
+  --color-cerca-principal: oklch(48.83% 0.189 20.51);
+  --color-cerca-principal-pulsada: oklch(40.65% 0.155 19.65);
+  --color-cerca-sutil: oklch(94.92% 0.02 5.76);
+  --color-cerca-foco: oklch(48.83% 0.189 20.51);
+  --color-cerca-sobre-principal: oklch(100% 0 263.28);
+  --color-montana-sobre-principal: oklch(100% 0 263.28);
+  /* Fondo general de cada pantalla */
+  --color-fondo-lienzo: var(--color-gris-100);
+  /* Tarjetas, formularios y paneles */
+  --color-fondo-superficie: var(--color-gris-50);
+  /* Agrupar contenido sin indicar estado */
+  --color-fondo-sutil: var(--color-gris-100);
+  /* Zonas oscuras con texto inverso */
+  --color-fondo-inverso: var(--color-gris-800);
+  /* Títulos, instrucciones y contenido esencial */
+  --text-color-principal: var(--color-gris-800);
+  /* Información complementaria, no alertas críticas */
+  --text-color-secundario: var(--color-gris-600);
+  /* Texto sobre fondos oscuros */
+  --text-color-inverso: var(--color-gris-10);
+  /* Texto de control desactivado con explicación */
+  --text-color-sobre-desactivada: var(--color-gris-700);
+  /* Botón de la acción principal */
+  --color-accion-principal: var(--color-base-principal);
+  /* Estado pulsado de la acción principal */
+  --color-accion-principal-pulsada: var(--color-base-principal-pulsada);
+  /* Fondo del control no disponible */
+  --color-accion-desactivada: var(--color-gris-300);
+  /* Campos, botones secundarios y controles */
+  --color-borde-control: var(--color-gris-500);
+  /* Separadores decorativos, no controles */
+  --color-borde-sutil: var(--color-gris-300);
+  /* Foco de teclado de 3 px separado 2 px */
+  --color-foco-anillo: var(--color-base-foco);
+  /* Texto e icono de estados */
+  --text-color-estado-o: var(--color-gris-800);
+  /* Aviso con palabra e icono */
+  --color-estado-aviso-fondo: var(--color-gris-200);
+  /* Error con palabra e icono */
+  --color-estado-error-fondo: var(--color-gris-200);
+  /* Confirmación con palabra e icono */
+  --color-estado-exito-fondo: var(--color-gris-100);
+  --color-feedback-error-principal: var(--color-rojo-530);
+  --color-feedback-error-fondo: var(--color-rojo-40);
+  --color-feedback-error-borde: var(--color-rojo-200);
+  --text-color-feedback-error-o: var(--color-rojo-670);
+  --color-feedback-exito-principal: var(--color-verde-660);
+  --color-feedback-exito-fondo: var(--color-verde-60);
+  --color-feedback-exito-borde: var(--color-verde-280);
+  --text-color-feedback-exito-o: var(--color-verde-760);
+  --color-feedback-aviso-principal: var(--color-ambar-680);
+  --color-feedback-aviso-fondo: var(--color-ambar-60);
+  --color-feedback-aviso-borde: var(--color-ambar-290);
+  --text-color-feedback-aviso-o: var(--color-ambar-790);
+  --color-feedback-info-principal: var(--color-azul-580);
+  --color-feedback-info-fondo: var(--color-azul-50);
+  --color-feedback-info-borde: var(--color-azul-230);
+  --text-color-feedback-info-o: var(--color-azul-660);
+  --color-fondo-enfasis: var(--color-gris-200);
+  --color-fondo-atenuado: var(--color-negro);
+
+  /* Typography */
+  /* Acciones principales y secundarias */
+  --text-bot-n: var(--spacing-tamano-cuerpo);
+  --text-bot-n--line-height: var(--spacing-interlinea-cuerpo);
+  --text-bot-n--letter-spacing: 0px;
+  --text-bot-n--font-weight: 700;
+  --text-bot-n--font-family: "Inter";
+  --text-bot-n--text-decoration: none;
+  --text-bot-n--text-transform: none;
+  --text-bot-n--text-indent: 0px;
+  --text-bot-n--paragraph-spacing: 0px;
+
+  /* Instrucciones, alertas y párrafos */
+  --text-cuerpo: var(--spacing-tamano-cuerpo);
+  --text-cuerpo--line-height: var(--spacing-interlinea-cuerpo);
+  --text-cuerpo--letter-spacing: 0px;
+  --text-cuerpo--font-weight: 400;
+  --text-cuerpo--font-family: "Inter";
+  --text-cuerpo--text-decoration: none;
+  --text-cuerpo--text-transform: none;
+  --text-cuerpo--text-indent: 0px;
+  --text-cuerpo--paragraph-spacing: 0px;
+
+  /* Título de tarjeta o bloque */
+  --text-t-tulo-tarjeta: var(--spacing-tamano-tarjeta);
+  --text-t-tulo-tarjeta--line-height: var(--spacing-interlinea-tarjeta);
+  --text-t-tulo-tarjeta--letter-spacing: 0px;
+  --text-t-tulo-tarjeta--font-weight: 600;
+  --text-t-tulo-tarjeta--font-family: "Inter";
+  --text-t-tulo-tarjeta--text-decoration: none;
+  --text-t-tulo-tarjeta--text-transform: none;
+  --text-t-tulo-tarjeta--text-indent: 0px;
+  --text-t-tulo-tarjeta--paragraph-spacing: 0px;
+
+  /* Título de sección de configuración e historial */
+  --text-t-tulo-secci-n: var(--spacing-tamano-seccion);
+  --text-t-tulo-secci-n--line-height: var(--spacing-interlinea-seccion);
+  --text-t-tulo-secci-n--letter-spacing: 0px;
+  --text-t-tulo-secci-n--font-weight: 700;
+  --text-t-tulo-secci-n--font-family: "Inter";
+  --text-t-tulo-secci-n--text-decoration: none;
+  --text-t-tulo-secci-n--text-transform: none;
+  --text-t-tulo-secci-n--text-indent: 0px;
+  --text-t-tulo-secci-n--paragraph-spacing: 0px;
+
+  /* Campos y opciones */
+  --text-etiqueta: var(--spacing-tamano-cuerpo);
+  --text-etiqueta--line-height: var(--spacing-interlinea-cuerpo);
+  --text-etiqueta--letter-spacing: 0px;
+  --text-etiqueta--font-weight: 600;
+  --text-etiqueta--font-family: "Inter";
+  --text-etiqueta--text-decoration: none;
+  --text-etiqueta--text-transform: none;
+  --text-etiqueta--text-indent: 0px;
+  --text-etiqueta--paragraph-spacing: 0px;
+
+  /* Metadatos y ayudas no críticas */
+  --text-cuerpo-peque-o: var(--spacing-tamano-pequeno);
+  --text-cuerpo-peque-o--line-height: var(--spacing-interlinea-pequeno);
+  --text-cuerpo-peque-o--letter-spacing: 0px;
+  --text-cuerpo-peque-o--font-weight: 400;
+  --text-cuerpo-peque-o--font-family: "Inter";
+  --text-cuerpo-peque-o--text-decoration: none;
+  --text-cuerpo-peque-o--text-transform: none;
+  --text-cuerpo-peque-o--text-indent: 0px;
+  --text-cuerpo-peque-o--paragraph-spacing: 0px;
+
+  /* Enlaces de texto (por ejemplo «Editar» en Enlace con ícono) */
+  --text-etiqueta-subrayada: var(--spacing-tamano-cuerpo);
+  --text-etiqueta-subrayada--line-height: var(--spacing-interlinea-cuerpo);
+  --text-etiqueta-subrayada--letter-spacing: 0px;
+  --text-etiqueta-subrayada--font-weight: 600;
+  --text-etiqueta-subrayada--font-family: "Inter";
+  --text-etiqueta-subrayada--text-decoration: underline;
+  --text-etiqueta-subrayada--text-transform: none;
+  --text-etiqueta-subrayada--text-indent: 0px;
+  --text-etiqueta-subrayada--paragraph-spacing: 0px;
+
+  /* Título principal de pantalla */
+  --text-t-tulo-pantalla: var(--spacing-tamano-pantalla);
+  --text-t-tulo-pantalla--line-height: var(--spacing-interlinea-pantalla);
+  --text-t-tulo-pantalla--letter-spacing: 0px;
+  --text-t-tulo-pantalla--font-weight: 700;
+  --text-t-tulo-pantalla--font-family: "Inter";
+  --text-t-tulo-pantalla--text-decoration: none;
+  --text-t-tulo-pantalla--text-transform: none;
+  --text-t-tulo-pantalla--text-indent: 0px;
+  --text-t-tulo-pantalla--paragraph-spacing: 0px;
+
+  /* Encabezado de bloque dentro de una pantalla (más pequeño que Título/Tarjeta). */
+  --text-t-tulo-bloque: var(--spacing-tamano-bloque);
+  --text-t-tulo-bloque--line-height: var(--spacing-interlinea-bloque);
+  --text-t-tulo-bloque--letter-spacing: 0px;
+  --text-t-tulo-bloque--font-weight: 600;
+  --text-t-tulo-bloque--font-family: "Inter";
+  --text-t-tulo-bloque--text-decoration: none;
+  --text-t-tulo-bloque--text-transform: none;
+  --text-t-tulo-bloque--text-indent: 0px;
+  --text-t-tulo-bloque--paragraph-spacing: 0px;
+
+}
+
+@layer components {
+  /* Acciones principales y secundarias */
+  .typography-bot-n {
+    font-family: var(--text-bot-n--font-family);
+    font-size: var(--text-bot-n);
+    font-weight: var(--text-bot-n--font-weight);
+    line-height: var(--text-bot-n--line-height);
+    letter-spacing: var(--text-bot-n--letter-spacing);
+    text-decoration: var(--text-bot-n--text-decoration);
+    text-transform: var(--text-bot-n--text-transform);
+    text-indent: var(--text-bot-n--text-indent);
+    margin-bottom: var(--text-bot-n--paragraph-spacing);
+  }
+  /* Instrucciones, alertas y párrafos */
+  .typography-cuerpo {
+    font-family: var(--text-cuerpo--font-family);
+    font-size: var(--text-cuerpo);
+    font-weight: var(--text-cuerpo--font-weight);
+    line-height: var(--text-cuerpo--line-height);
+    letter-spacing: var(--text-cuerpo--letter-spacing);
+    text-decoration: var(--text-cuerpo--text-decoration);
+    text-transform: var(--text-cuerpo--text-transform);
+    text-indent: var(--text-cuerpo--text-indent);
+    margin-bottom: var(--text-cuerpo--paragraph-spacing);
+  }
+  /* Título de tarjeta o bloque */
+  .t-tulo-tarjeta {
+    font-family: var(--text-t-tulo-tarjeta--font-family);
+    font-size: var(--text-t-tulo-tarjeta);
+    font-weight: var(--text-t-tulo-tarjeta--font-weight);
+    line-height: var(--text-t-tulo-tarjeta--line-height);
+    letter-spacing: var(--text-t-tulo-tarjeta--letter-spacing);
+    text-decoration: var(--text-t-tulo-tarjeta--text-decoration);
+    text-transform: var(--text-t-tulo-tarjeta--text-transform);
+    text-indent: var(--text-t-tulo-tarjeta--text-indent);
+    margin-bottom: var(--text-t-tulo-tarjeta--paragraph-spacing);
+  }
+  /* Título de sección de configuración e historial */
+  .t-tulo-secci-n {
+    font-family: var(--text-t-tulo-secci-n--font-family);
+    font-size: var(--text-t-tulo-secci-n);
+    font-weight: var(--text-t-tulo-secci-n--font-weight);
+    line-height: var(--text-t-tulo-secci-n--line-height);
+    letter-spacing: var(--text-t-tulo-secci-n--letter-spacing);
+    text-decoration: var(--text-t-tulo-secci-n--text-decoration);
+    text-transform: var(--text-t-tulo-secci-n--text-transform);
+    text-indent: var(--text-t-tulo-secci-n--text-indent);
+    margin-bottom: var(--text-t-tulo-secci-n--paragraph-spacing);
+  }
+  /* Campos y opciones */
+  .typography-etiqueta {
+    font-family: var(--text-etiqueta--font-family);
+    font-size: var(--text-etiqueta);
+    font-weight: var(--text-etiqueta--font-weight);
+    line-height: var(--text-etiqueta--line-height);
+    letter-spacing: var(--text-etiqueta--letter-spacing);
+    text-decoration: var(--text-etiqueta--text-decoration);
+    text-transform: var(--text-etiqueta--text-transform);
+    text-indent: var(--text-etiqueta--text-indent);
+    margin-bottom: var(--text-etiqueta--paragraph-spacing);
+  }
+  /* Metadatos y ayudas no críticas */
+  .cuerpo-peque-o {
+    font-family: var(--text-cuerpo-peque-o--font-family);
+    font-size: var(--text-cuerpo-peque-o);
+    font-weight: var(--text-cuerpo-peque-o--font-weight);
+    line-height: var(--text-cuerpo-peque-o--line-height);
+    letter-spacing: var(--text-cuerpo-peque-o--letter-spacing);
+    text-decoration: var(--text-cuerpo-peque-o--text-decoration);
+    text-transform: var(--text-cuerpo-peque-o--text-transform);
+    text-indent: var(--text-cuerpo-peque-o--text-indent);
+    margin-bottom: var(--text-cuerpo-peque-o--paragraph-spacing);
+  }
+  /* Enlaces de texto (por ejemplo «Editar» en Enlace con ícono) */
+  .etiqueta-subrayada {
+    font-family: var(--text-etiqueta-subrayada--font-family);
+    font-size: var(--text-etiqueta-subrayada);
+    font-weight: var(--text-etiqueta-subrayada--font-weight);
+    line-height: var(--text-etiqueta-subrayada--line-height);
+    letter-spacing: var(--text-etiqueta-subrayada--letter-spacing);
+    text-decoration: var(--text-etiqueta-subrayada--text-decoration);
+    text-transform: var(--text-etiqueta-subrayada--text-transform);
+    text-indent: var(--text-etiqueta-subrayada--text-indent);
+    margin-bottom: var(--text-etiqueta-subrayada--paragraph-spacing);
+  }
+  /* Título principal de pantalla */
+  .t-tulo-pantalla {
+    font-family: var(--text-t-tulo-pantalla--font-family);
+    font-size: var(--text-t-tulo-pantalla);
+    font-weight: var(--text-t-tulo-pantalla--font-weight);
+    line-height: var(--text-t-tulo-pantalla--line-height);
+    letter-spacing: var(--text-t-tulo-pantalla--letter-spacing);
+    text-decoration: var(--text-t-tulo-pantalla--text-decoration);
+    text-transform: var(--text-t-tulo-pantalla--text-transform);
+    text-indent: var(--text-t-tulo-pantalla--text-indent);
+    margin-bottom: var(--text-t-tulo-pantalla--paragraph-spacing);
+  }
+  /* Encabezado de bloque dentro de una pantalla (más pequeño que Título/Tarjeta). */
+  .t-tulo-bloque {
+    font-family: var(--text-t-tulo-bloque--font-family);
+    font-size: var(--text-t-tulo-bloque);
+    font-weight: var(--text-t-tulo-bloque--font-weight);
+    line-height: var(--text-t-tulo-bloque--line-height);
+    letter-spacing: var(--text-t-tulo-bloque--letter-spacing);
+    text-decoration: var(--text-t-tulo-bloque--text-decoration);
+    text-transform: var(--text-t-tulo-bloque--text-transform);
+    text-indent: var(--text-t-tulo-bloque--text-indent);
+    margin-bottom: var(--text-t-tulo-bloque--paragraph-spacing);
+  }
 }

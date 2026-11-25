@@ -117,7 +117,8 @@ export default function ConfigurarAviso({
 
   // Minutos que se pueden elegir para las horas ya elegidas: sin "0" si con 0 horas quedaría por debajo del
   // mínimo (15 min), y sin 15, 30 ni 45 si ya se llegó al máximo (24 h). Así no hay opciones que no funcionan.
-  const minutosPosibles = [0, 15, 30, 45].filter((m) => {
+  // Minuto a minuto (0 a 59), para poder elegir tiempos cortos como 2 min en una demo.
+  const minutosPosibles = Array.from({ length: 60 }, (_, m) => m).filter((m) => {
     const total = Math.floor(gracia / 60) * 60 + m;
     return total >= limites.graciaMin && total <= limites.graciaMax;
   });
@@ -364,11 +365,6 @@ export default function ConfigurarAviso({
                   </select>
                 </div>
               </div>
-            )}
-            {graciaOtro && (
-              <p className={clases.ayuda}>
-                {rellenar(t.hora.graciaRango, { min: duracion(limites.graciaMin), max: duracion(limites.graciaMax) })}
-              </p>
             )}
             {errores.gracia ? (
               <p className={clases.error}>{errores.gracia}</p>

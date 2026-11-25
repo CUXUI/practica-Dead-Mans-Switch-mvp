@@ -13,7 +13,7 @@ export type Brand = {
 const BRANDS: Record<Variant, Brand> = {
   cerca: {
     variant: "cerca",
-    name: "Cerca",
+    name: "Cheki",
     description: "Avisá que estás bien. Si dejás de avisar, tus contactos de confianza lo saben.",
     themeColor: "#1f4e5f",
   },
